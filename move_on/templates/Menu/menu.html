@@ -17,10 +17,10 @@
     <nav class="sidebar">
         <h6>MoveOn</h6>
 
-        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Home">
+        <a href="/" data-bs-toggle="tooltip" data-bs-placement="right" title="Home">
             <i class="fas fa-home"></i> <span>Home</span>
         </a>
-        <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Chamados">
+        <a href="{%url 'ticket_list' %}" data-bs-toggle="tooltip" data-bs-placement="right" title="Chamados">
             <i class="fas fa-tasks"></i> <span>Chamados</span>
         </a>
         <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Clientes">
@@ -41,7 +41,8 @@
     </div>
 
     <!-- Botão flutuante de suporte -->
-    <a href="#" class="support-btn" data-bs-toggle="tooltip" data-bs-placement="left" title="Novo Chamado">
+    <a href="{% url 'ticket_form' %}" class="support-btn" data-bs-toggle="tooltip" data-bs-placement="left"
+        title="Novo Chamado">
         <i class="fa-brands fa-teamspeak"></i>
     </a>
 

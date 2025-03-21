@@ -13,12 +13,12 @@ from django.db.models import Q
 class MenuViewiew(TemplateView):
     template_name = 'Menu/menu.html'
 
-class TicketListView(LoginRequiredMixin, ListView):
+class TicketListView(ListView):
     model = Ticket
     template_name = 'tickets/ticket_list.html'
     context_object_name = 'tickets'
     
-    def get_queryset(self):
+''' def get_queryset(self):
         
         user= self.request.user
         
@@ -28,7 +28,7 @@ class TicketListView(LoginRequiredMixin, ListView):
             Q(client=user.client) &
             (Q(createted_by=user)) | Q(assigned_by=user) | Q(client=user.client)
         )
-
+'''
 
 
 class TicketDetail(LoginRequiredMixin, DetailView):
@@ -84,10 +84,10 @@ class SLACreateView(LoginRequiredMixin, CreateView):
     model = SLA
     form_class = SLAForm
     template_name = 'tickets/sla_create.html'
-    success_url = reverse_lazy('sla_list')  # Redireciona para a lista de SLAs após a criação
+    success_url = reverse_lazy('sla_list') 
 
     def form_valid(self, form):
-        # Aqui você pode adicionar lógica extra, como enviar notificações ou logar informações
+
         return super().form_valid(form)
 
 

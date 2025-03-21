@@ -1,0 +1,56 @@
+{% extends "Menu/menu.html" %}
+
+{% block extra_head %}
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+
+<h4 style="margin: 25px; text-align: center">Meus de Tickets</h4>
+<table class="table table-sm" id="ticketTable">
+    <thead>
+        <tr>
+            <th>Nº do Tkt</th>
+            <th>Título</th>
+            <th>Status</th>
+            <th>Criado Por</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ticket in tickets %}
+        <tr>
+            <td>{{ ticket.id }}</td>
+            <td>{{ ticket.title }}</td>
+            <td>{{ ticket.status }}</td>
+            <td>{{ ticket.created_by }}</td>
+            <td>
+                <a href="{% url 'ticket_detail' ticket.id %}" class="btn btn-info btn-sm">Detalhes</a>
+                <a href="{% url 'ticket_update' ticket.id %}" class="btn btn-warning btn-sm">Editar</a>
+                <a href="{% url 'ticket_delete' ticket.id %}" class="btn btn-danger btn-sm">Excluir</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" class="text-center">Nenhum ticket encontrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    if (typeof jQuery === 'undefined') {
+        console.error('jQuery não está carregado corretamente.');
+    } else {
+        var jq = $.noConflict();  // Evita conflito com o $ (caso haja outra biblioteca utilizando)
+        jq(document).ready(function () {
+            jq('#ticketTable th').resizable({
+                handles: 'e',
+                minWidth: 50
+            });
+        });
+    }
+</script>
+
+{% endblock %}
