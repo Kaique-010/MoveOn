@@ -4,13 +4,14 @@ from .models import Ticket, TicketAlert, SLA
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ['title', 'description', 'assigned_to', 'status', 'due_date']
+        fields = ['title', 'description', 'assigned_to', 'status', 'due_date', 'sla']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter ticket title'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Describe the issue'}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Entre com o Titulo geral do Tkt'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 6, 'placeholder': 'Descreva quais são os problemas'}),
             'assigned_to': forms.Select(attrs={'class': 'form-select'}),
             'status': forms.Select(attrs={'class': 'form-select'}),
             'due_date': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+            'sla': forms.Select(attrs={'class': 'form-select'}),
         }
 
 class TicketAlertForm(forms.ModelForm):

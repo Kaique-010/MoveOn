@@ -44,7 +44,7 @@ class TicketDetail(LoginRequiredMixin, DetailView):
 class TicketCreate(LoginRequiredMixin, CreateView):
     model = Ticket
     form_class = TicketForm
-    template_name = 'tickets/tickets_form'
+    template_name = 'tickets/tickets_form.html'
     success_url = 'ticket_list'
     
     def form_valid(self, form):
@@ -56,7 +56,7 @@ class TicketCreate(LoginRequiredMixin, CreateView):
 class TicketUpdate(LoginRequiredMixin, UpdateView):
     model = Ticket
     form_class = TicketForm
-    template_name = "tickets/ticket_form.html"
+    template_name = 'tickets/tickets_form.html'
     success_url = reverse_lazy("ticket_list")
 
     def get_queryset(self):

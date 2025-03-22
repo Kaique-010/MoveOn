@@ -1,56 +1,91 @@
-{% extends "Menu/menu.html" %}
+{% extends "Menu/menu.html" %} {% block content %}
 
-{% block extra_head %}
-<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-    crossorigin="anonymous"></script>
-{% endblock %}
+<h4 style="margin: 25px; text-align: center">
+  <i class="fas fa-tasks"></i> Meus Tickets
+</h4>
 
-{% block content %}
-
-<h4 style="margin: 25px; text-align: center">Meus de Tickets</h4>
-<table class="table table-sm" id="ticketTable">
-    <thead>
-        <tr>
-            <th>Nº do Tkt</th>
-            <th>Título</th>
-            <th>Status</th>
-            <th>Criado Por</th>
-            <th>Ações</th>
-        </tr>
+<div class="table-responsive">
+  <table class="table table-sm table-striped" id="ticketTable">
+    <thead class="text-center">
+      <tr>
+        <th>Ações</th>
+        <th>SLA</th>
+        <th>Nº do Tkt</th>
+        <th>Cliente/Empresa</th>
+        <th>Título</th>
+        <th>Status</th>
+        <th>Criado Por</th>
+        <th>Previsto para</th>
+      </tr>
     </thead>
     <tbody>
-        {% for ticket in tickets %}
-        <tr>
-            <td>{{ ticket.id }}</td>
-            <td>{{ ticket.title }}</td>
-            <td>{{ ticket.status }}</td>
-            <td>{{ ticket.created_by }}</td>
-            <td>
-                <a href="{% url 'ticket_detail' ticket.id %}" class="btn btn-info btn-sm">Detalhes</a>
-                <a href="{% url 'ticket_update' ticket.id %}" class="btn btn-warning btn-sm">Editar</a>
-                <a href="{% url 'ticket_delete' ticket.id %}" class="btn btn-danger btn-sm">Excluir</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="5" class="text-center">Nenhum ticket encontrado.</td>
-        </tr>
-        {% endfor %}
+      {% for ticket in tickets %}
+      <tr>
+        <td>
+          <div class="btn-group">
+            <button
+              type="button"
+              class="btn btn-info btn-sm dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Ações
+            </button>
+            <div class="dropdown-menu">
+              <a
+                class="dropdown-item"
+                href="{% url 'ticket_detail' ticket.id %}"
+              >
+                <i class="fas fa-eye"></i> Detalhes
+              </a>
+              <a
+                class="dropdown-item"
+                href="{% url 'ticket_update' ticket.id %}"
+              >
+                <i class="fas fa-edit"></i> Editar
+              </a>
+              <a
+                class="dropdown-item text-danger"
+                href="{% url 'ticket_delete' ticket.id %}"
+              >
+                <i class="fas fa-trash-alt"></i> Excluir
+              </a>
+            </div>
+          </div>
+        </td>
+        <td>{{ ticket.sla }}</td>
+        <td>{{ ticket.id }}</td>
+        <td>{{ ticket.client }}</td>
+        <td>{{ ticket.title }}</td>
+        <td>{{ ticket.status }}</td>
+        <td>{{ ticket.created_by }}</td>
+        <td>{{ ticket.duo_date }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="8" class="text-center">Nenhum ticket encontrado.</td>
+      </tr>
+      {% endfor %}
     </tbody>
-</table>
+  </table>
+</div>
 
 <script>
-    if (typeof jQuery === 'undefined') {
-        console.error('jQuery não está carregado corretamente.');
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof jQuery === "undefined") {
+      console.error("jQuery não carregou!");
     } else {
-        var jq = $.noConflict();  // Evita conflito com o $ (caso haja outra biblioteca utilizando)
-        jq(document).ready(function () {
-            jq('#ticketTable th').resizable({
-                handles: 'e',
-                minWidth: 50
-            });
-        });
+      console.log("jQuery carregado com sucesso!");
+      var jq = $.noConflict();
+
+      // Tornar as colunas redimensionáveis
+      jq("#ticketTable th").resizable({
+        handles: "e",
+        minWidth: 50,
+      });
     }
+  });
 </script>
 
 {% endblock %}

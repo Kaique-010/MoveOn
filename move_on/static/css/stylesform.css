@@ -1,0 +1,71 @@
+.form-group {
+  padding: 10px;
+  color: antiquewhite;
+  margin: 8px;
+  font-size: 12px;
+}
+
+.form-control {
+  background-color: rgb(228, 228, 228);
+}
+
+h2 {
+  color: aliceblue;
+  font-size: 20px;
+  margin-top: 25px;
+}
+
+.btn-primary {
+  background-color: rgb(20, 61, 81);
+  color: aliceblue;
+  border-radius: 8px;
+  border-color: None;
+  padding: 2, 1, 0px;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: cadetblue;
+  color: black;
+}
+
+.btn-secondary {
+  background-color: rgb(119, 48, 55);
+  color: aliceblue;
+  border-radius: 8px;
+  border-color: None;
+  padding: 2, 1, 0px;
+  transition: 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: rgb(242, 220, 111);
+  color: black;
+}
+
+.sla-priority {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 50px;
+  font-weight: bold;
+  color: white;
+}
+
+.sla-priority.low {
+  background-color: green;
+}
+
+.sla-priority.medium {
+  background-color: yellow;
+}
+
+.sla-priority.high {
+  background-color: orange;
+}
+
+.sla-priority.critical {
+  background-color: red;
+}

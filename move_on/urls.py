@@ -3,7 +3,7 @@ from .views import MenuViewiew, TicketCreate, TicketDelete, TicketDetail, Ticket
 
 urlpatterns = [
     path('', MenuViewiew.as_view(), name='index'), 
-    path('tickets/lisi',TicketListView.as_view(), name="ticket_list"),
+    path('tickets/list',TicketListView.as_view(), name="ticket_list"),
     path('tickets/detail', TicketDetail.as_view(), name="ticket_detail"),
     path('tickets/create', TicketCreate.as_view(), name="ticket_form"),
     path('tickets/update', TicketUpdate.as_view(), name="ticket_detail"),

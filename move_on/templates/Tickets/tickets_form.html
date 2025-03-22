@@ -1,0 +1,75 @@
+{% extends 'Menu/menu.html' %} {% load static %} {% load custom_filters %}
+<!-- Aqui você carrega o filtro personalizado -->
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/stylesform.css' %}" />
+<div class="container">
+  <h2>
+    {% if form.instance.pk %}Editar Ticket{% else %}Criar Novo Ticket{% endif %}
+  </h2>
+
+  <!-- Formulário para criar um novo ticket -->
+  <form method="POST">
+    {% csrf_token %} {% if form.errors %}
+    <div class="alert alert-danger">
+      <strong>Erro!</strong> Corrija os erros abaixo.
+    </div>
+    {% endif %}
+    <div class="row">
+      <div class="col-6">
+        <div class="form-group">
+          <label for="sla">Prioridade:</label>
+          {{ form.sla }} {% if form.sla.errors %}
+          <div class="text-danger">
+            {% for error in form.sla.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-6" style="background-color: {{form.sla.value|get_color}}">
+        <!-- Exibe o valor da prioridade -->
+        {{ form.sla.value|capfirst }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="title">Título:</label>
+      {{ form.title }} {% if form.title.errors %}
+      <div class="text-danger">
+        {% for error in form.title.errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descrição:</label>
+      {{ form.description }} {% if form.description.errors %}
+      <div class="text-danger">
+        {% for error in form.description.errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Campos adicionais do formulário -->
+    <div class="form-group">
+      <label for="assigned_to">Atribuído a:</label>
+      {{ form.assigned_to }} {% if form.assigned_to.errors %}
+      <div class="text-danger">
+        {% for error in form.assigned_to.errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Botões -->
+    <button type="submit" class="btn btn-primary">Criar Ticket</button>
+    <a href="{% url 'ticket_list' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}
