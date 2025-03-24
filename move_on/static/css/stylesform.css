@@ -9,6 +9,30 @@
   background-color: rgb(228, 228, 228);
 }
 
+.form-group input,
+.form-group select,
+.form-group textarea {
+  font-size: 14px; /* Ajustando o tamanho da fonte nos campos de input */
+  padding: 8px 12px; /* Reduzindo o padding para um campo mais compacto */
+  height: 30px; /* Altura mais reduzida para os inputs */
+  border-radius: 5px; /* Bordas arredondadas para um visual mais clean */
+  border: 1px solid #ddd; /* Borda fina */
+  width: 100%; /* Garantindo que ocupe toda a largura disponível */
+  box-sizing: border-box; /* Garantindo que o padding não ultrapasse a largura */
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #007bff; /* Cor de borda ao focar no campo */
+  outline: none; /* Removendo o contorno padrão */
+}
+
+.form-group .text-danger {
+  font-size: 12px; /* Diminuindo o tamanho das mensagens de erro */
+  color: #e74c3c; /* Cor mais suave para erro */
+}
+
 h2 {
   color: aliceblue;
   font-size: 20px;
@@ -68,4 +92,10 @@ h2 {
 
 .sla-priority.critical {
   background-color: red;
+}
+
+#tkt {
+  background-color: #1e3a4b;
+  border-radius: 10px;
+  padding: 50px;
 }

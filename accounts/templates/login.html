@@ -1,0 +1,88 @@
+{% extends 'Menu/menu.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+
+    .card {
+        border-radius: 8px;
+    }
+
+    .form-control {
+        border-radius: 5px;
+        box-shadow: none;
+    }
+
+    .btn-primary {
+        background-color: #1E3A4B;
+        border-color: #bfc4ca;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .input-group-text {
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        border-right: none;
+    }
+
+    .form-control {
+        border-left: none;
+    }
+</style>
+
+<div class="container d-flex justify-content-center align-items-center" style="height: 70vh;">
+    <div class="card shadow-lg" style="width: 100%; max-width: 400px;">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4">Login</h4>
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+
+                <!-- Username Field with Icon -->
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Usuário</label>
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="fas fa-user"></i></div>
+                        <input type="text" name="username" id="id_username" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Password Field with Icon -->
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Senha</label>
+                    <div class="input-group">
+                        <div class="input-group-text"><i class="fas fa-lock"></i></div>
+                        <input type="password" name="password" id="id_password" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div class="mb-3 text-danger">
+                    {% if form.errors %}
+                    <ul>
+                        {% for field in form %}
+                        {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Font Awesome Icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}

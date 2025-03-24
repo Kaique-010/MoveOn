@@ -1,0 +1,24 @@
+{% extends "Menu/menu.html" %}
+
+{% block content %}
+<h4 style="margin: 25px; text-align: center">
+    <i class="fas fa-trash-alt"></i> Excluir Ticket
+</h4>
+
+<div class="alert alert-warning" role="alert">
+    <strong>Você tem certeza que deseja excluir este ticket?</strong>
+    <br>
+    <strong>Título: </strong>{{ ticket.title }}
+    <br>
+    <strong>Cliente: </strong>{{ ticket.client }}
+    <br>
+    <strong>Status: </strong>{{ ticket.status }}
+</div>
+<form method="POST" action="{% url 'ticket_delete' ticket.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="_method" value="DELETE">
+    <button type="submit" class="btn btn-danger">Sim, excluir</button>
+    <a href="{% url 'ticket_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+{% endblock %}

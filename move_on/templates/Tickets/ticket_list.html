@@ -1,4 +1,6 @@
-{% extends "Menu/menu.html" %} {% block content %}
+{% extends "Menu/menu.html" %}
+{% block content %}
+{% load custom_filters %}
 
 <h4 style="margin: 25px; text-align: center">
   <i class="fas fa-tasks"></i> Meus Tickets
@@ -9,62 +11,48 @@
     <thead class="text-center">
       <tr>
         <th>Ações</th>
-        <th>SLA</th>
+        <th>Prioridade</th>
         <th>Nº do Tkt</th>
         <th>Cliente/Empresa</th>
         <th>Título</th>
         <th>Status</th>
-        <th>Criado Por</th>
-        <th>Previsto para</th>
+        <th>Criado Por:</th>
+        <th>Previsto para:</th>
+        <th>Equipe Atual:</th>
       </tr>
     </thead>
     <tbody>
       {% for ticket in tickets %}
       <tr>
         <td>
-          <div class="btn-group">
-            <button
-              type="button"
-              class="btn btn-info btn-sm dropdown-toggle"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Ações
-            </button>
-            <div class="dropdown-menu">
-              <a
-                class="dropdown-item"
-                href="{% url 'ticket_detail' ticket.id %}"
-              >
-                <i class="fas fa-eye"></i> Detalhes
-              </a>
-              <a
-                class="dropdown-item"
-                href="{% url 'ticket_update' ticket.id %}"
-              >
-                <i class="fas fa-edit"></i> Editar
-              </a>
-              <a
-                class="dropdown-item text-danger"
-                href="{% url 'ticket_delete' ticket.id %}"
-              >
-                <i class="fas fa-trash-alt"></i> Excluir
-              </a>
-            </div>
-          </div>
+          <a href="{% url 'ticket_update' ticket.id %}">
+            <i class="fas fa-edit" aria-placeholder="Editar" tooltip="Editar"></i>
+          </a>
+          <a class="text-danger" href="{% url 'ticket_delete' ticket.id %}">
+            <i class="fas fa-trash-alt" aria-placeholder="Deletar" tooltip="Deletar"></i>
+          </a>
         </td>
-        <td>{{ ticket.sla }}</td>
+        <td
+          style="background-color: {% if ticket.sla %}{{ ticket.sla.priority|get_color }}{% else %}#FFFFFF{% endif %}; color: white;">
+          {% if ticket.sla %}
+          {{ ticket.sla.get_priority_display }}
+          {% else %}
+          Não definido
+          {% endif %}
+        </td>
         <td>{{ ticket.id }}</td>
         <td>{{ ticket.client }}</td>
         <td>{{ ticket.title }}</td>
         <td>{{ ticket.status }}</td>
         <td>{{ ticket.created_by }}</td>
-        <td>{{ ticket.duo_date }}</td>
+        <td>
+          {% if ticket.due_date %}
+          {{ ticket.due_date|date:" d/m/Y H:i" }} {% else %} Não definido {% endif %} </td>
+        <td>{{ ticket.assigned_team }}</td>
       </tr>
       {% empty %}
       <tr>
-        <td colspan="8" class="text-center">Nenhum ticket encontrado.</td>
+        <td colspan="9" class="text-center">Nenhum ticket encontrado.</td>
       </tr>
       {% endfor %}
     </tbody>

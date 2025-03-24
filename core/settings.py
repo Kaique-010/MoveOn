@@ -11,7 +11,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 # Application definition
 
 INSTALLED_APPS = [
@@ -21,6 +22,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'accounts',
     'move_on'
 ]
 
@@ -42,6 +46,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'move_on', 'templates', 'Menu'),  # Para templates do Menu
             os.path.join(BASE_DIR, 'move_on', 'templates', 'Tickets'),  # Para templates de Tickets
+            os.path.join(BASE_DIR, 'accounts', 'templates'),  # Para templates de Tickets
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -102,3 +107,5 @@ STATIC_ROOT = BASE_DIR / "static"
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_REDIRECT_URL = '/'
+AUTH_USER_MODEL = 'move_on.User'

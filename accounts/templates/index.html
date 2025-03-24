@@ -1,0 +1,202 @@
+{% extends 'Menu/menu.html' %}
+{% block content %}
+<style>
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+
+    .container {
+        max-width: 100%;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .ticket-wrapper {
+        flex: 1;
+        min-width: 280px;
+        margin: 8px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .ticket-card {
+        width: 100%;
+        /* Faz o card ocupar a largura inteira do seu contêiner */
+        max-width: 280px;
+        /* Tamanho máximo do card */
+        height: 100px;
+        /* Ajuste de altura */
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+        color: #333;
+        background: #f8f9fa;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .ticket-icon {
+        font-size: 28px;
+        color: #555;
+        width: 40px;
+        text-align: center;
+    }
+
+    .ticket-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ticket-card h5 {
+        margin: 0;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .ticket-count {
+        font-size: 28px;
+        font-weight: 700;
+        color: #222;
+        margin: 3px 0;
+    }
+
+    .ticket-card span {
+        font-size: 12px;
+        color: #777;
+    }
+
+    .ticket-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilo para os diferentes papéis */
+    .ticket-card.hoje {
+        background: #DCEFD5;
+    }
+
+    .ticket-card.semana {
+        background: #FFF3CD;
+    }
+
+    .ticket-card.mes {
+        background: #D6E5FA;
+    }
+
+    /* Responsividade para dispositivos menores */
+    @media (max-width: 768px) {
+        .container {
+            padding: 10px;
+        }
+
+        .ticket-wrapper {
+            width: 100%;
+            margin: 6px 0;
+        }
+
+        .ticket-card {
+            width: 100%;
+            max-width: none;
+            /* Remove o limite de largura */
+            margin: 8px 0;
+        }
+
+        .ticket-info h5 {
+            font-size: 12px;
+        }
+
+        .ticket-count {
+            font-size: 24px;
+        }
+    }
+
+    /* Estilo para o container do "Contagem de Tickets por Papel" */
+    .roles-container {
+        width: 100%;
+        max-width: 100%;
+        /* Certifica que ocupe 100% da tela */
+        margin-top: 20px;
+    }
+
+    .roles-card {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        color: aliceblue;
+    }
+
+    .roles-card-body {
+        padding: 15px;
+    }
+
+    .roles-card-title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .roles-list {
+        margin-top: 10px;
+    }
+
+    .roles-list li {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+</style>
+
+<div class="container">
+    <!-- Cards de Tickets -->
+    <div class="d-flex flex-wrap justify-content-between">
+        <div class="ticket-wrapper">
+            <div class="ticket-card hoje">
+                <i class="fas fa-calendar-day ticket-icon"></i>
+                <div class="ticket-info">
+                    <h5>Hoje</h5>
+                    <p class="ticket-count">{{ tickets_today }}</p>
+                    <span>Tickets Abertos</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ticket-wrapper">
+            <div class="ticket-card semana">
+                <i class="fas fa-calendar-week ticket-icon"></i>
+                <div class="ticket-info">
+                    <h5>Semana</h5>
+                    <p class="ticket-count">{{ tickets_week }}</p>
+                    <span>Tickets Abertos</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ticket-wrapper">
+            <div class="ticket-card mes">
+                <i class="fas fa-calendar-alt ticket-icon"></i>
+                <div class="ticket-info">
+                    <h5>Mês</h5>
+                    <p class="ticket-count">{{ tickets_month }}</p>
+                    <span>Tickets Abertos</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contagem de Tickets por Papel -->
+    <div class="roles-container">
+        <div class="roles-card">
+            <div class="roles-card-body">
+                <h5 class="roles-card-title">Contagem de Tickets por Equipe</h5>
+                <ul class="roles-list">
+                    {% for role, count in roles_tkts.items %}
+                    <li><strong>{{ role|title }}:</strong> {{ count }} Tickets</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

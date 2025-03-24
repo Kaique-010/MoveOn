@@ -8,11 +8,11 @@ def get_color(value):
     Retorna a cor de fundo com base na prioridade do ticket.
     """
     if value == 'low':
-        return 'green'
+        return '#00c16c'
     elif value == 'medium':
-        return 'yellow'
+        return '#ffc52c'
     elif value == 'high':
-        return 'orange'
+        return '#ff9915'
     elif value == 'critical':
-        return 'red'
+        return '#CC3733'
     return 'gray'  # Valor padrão, caso não tenha correspondência

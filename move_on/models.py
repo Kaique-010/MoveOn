@@ -1,10 +1,13 @@
-from datetime import timedelta
+from datetime import timedelta, timezone
+from tkinter.tix import Tree
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.utils.timezone import now
+from django.utils import timezone
+from datetime import timedelta
 
 
-class Client(models.Model):
+#1- Modelo para todos os Clientes e perfis 
+class Profile(models.Model):
     name = models.CharField("Nome da Empresa", max_length=150)
     document = models.CharField("CPF/CNPJ", max_length=18, unique=True)
     email = models.EmailField("E-mail", unique=True)
@@ -13,7 +16,7 @@ class Client(models.Model):
     created_at = models.DateTimeField("Criado em", auto_now_add=True)
 
     class Meta:
-        db_table = "clients"
+        db_table = "profiles"
 
     def __str__(self):
         return f"{self.name} - {'Ativo' if self.active else 'Inativo'}"
@@ -23,17 +26,25 @@ class Client(models.Model):
         super().save(*args, **kwargs)
 
 
-class RoleChoices(models.TextChoices):
-    ADMIN = "admin", "Administrator"
-    ANALYST = "analyst", "Analyst"
-    TECHNICIAN = "technician", "Technician"
-    DEVELOPER = "developer", "Developer"
-    CUSTOMER = "customer", "Customer"
+# 2. Modelo de Roles (Permite Adição de Novos Papéis)
+class Role(models.Model):
+    name = models.CharField("Nome do Papel", max_length=50, unique=True)
+    description = models.TextField("Descrição", blank=True, null=True)
+
+    class Meta:
+        db_table = "roles"
+
+    def __str__(self):
+        return self.name
 
 
+
+
+# 3. Modelo User 
 class User(AbstractUser):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="users", null=True, blank=True)
-    role = models.CharField(max_length=30, choices=RoleChoices.choices)
+    client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="users", null=True, blank=True, db_column='client')
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True, db_column='role')
+
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='move_on_users',
@@ -49,9 +60,12 @@ class User(AbstractUser):
         db_table = "users"
 
     def __str__(self):
-        return f"{self.username} ({self.get_role_display()})"
+        return f"{self.username} ({self.role})" if self.role else self.username
 
 
+
+
+#4- modelo dePrioridades dos Tkts segue sendo um choices
 class SLAPriority(models.TextChoices):
     LOW = "low", "Low"
     MEDIUM = "medium", "Medium"
@@ -61,14 +75,15 @@ class SLAPriority(models.TextChoices):
     @classmethod
     def get_color(cls, value):
         color_map = {
-            cls.LOW: 'green',  # Verde para baixa prioridade
-            cls.MEDIUM: 'yellow',  # Amarelo para média prioridade
-            cls.HIGH: 'black',  # Laranja para alta prioridade
-            cls.CRITICAL: 'red',  # Vermelho para prioridade crítica
+            cls.LOW: 'green',  
+            cls.MEDIUM: 'yellow', 
+            cls.HIGH: 'black', 
+            cls.CRITICAL: 'red',  
         }
         return color_map.get(value, 'gray')
 
 
+#5- Modelo das SLA 
 class SLA(models.Model):
     priority = models.CharField("Prioridade",max_length=10, choices=SLAPriority.choices)
     response_time = models.IntegerField("Tempo de Resposta (dias)")
@@ -87,43 +102,110 @@ class SLA(models.Model):
         db_table = "sla"
 
 
+#6-Status dos Tkts
+class TicketStatus(models.Model):
+    name = models.CharField("Status", max_length=50, unique=True)
 
-class TicketStatus(models.TextChoices):
-    NEW = "new", "New"
-    UNDER_ANALYSIS = "under_analysis", "Under Analysis"
-    IN_DEVELOPMENT = "in_development", "In Development"
-    WAITING_CUSTOMER = "waiting_customer", "Waiting for Customer"
-    RESOLVED = "resolved", "Resolved"
-    CANCELED = "canceled", "Canceled"
-    CLOSED = "closed", "Closed"
+    class Meta:
+        db_table = "ticket_status"
 
+    def __str__(self):
+        return self.name
+
+
+class Team(models.Model):
+    client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="teams", blank=True, null=True)
+    name = models.CharField("Nome da Equipe", max_length=150)
+    roles = models.ManyToManyField(Role, related_name="teams", blank=True)  
+    members = models.ManyToManyField(User, related_name="teams", blank=True)  
+
+    class Meta:
+        db_table = "teams"
+
+    def __str__(self):
+        return f"{self.name}"
+    
 
 class Ticket(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name="tickets")
+    client = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name="tickets")
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_tickets")
-    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="assigned_tickets")
+    assigned_team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets")
     sla = models.ForeignKey(SLA, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField("Título", max_length=255)
     description = models.TextField("Descrição")
-    status = models.CharField("Status", max_length=20, choices=TicketStatus.choices, default=TicketStatus.NEW)
+    status = models.ForeignKey(TicketStatus, on_delete=models.SET_NULL, null=True, blank=True, default="Novo")
     created_at = models.DateTimeField("Criado em", auto_now_add=True)
     updated_at = models.DateTimeField("Atualizado em", auto_now=True)
-    due_date = models.DateTimeField(null=True, blank=True)
+    due_date = models.DateTimeField("Previsão",null=True, blank=True)
 
     class Meta:
         db_table = "tickets"
 
     def __str__(self):
-        return f"#{self.id} - {self.title} ({self.get_status_display()})"
+        return f"#{self.id} - {self.title} ({self.status})"
+    
+    def can_transition(self, user, to_status):
+        """ Verifica se o usuário pode avançar para o status desejado """
+        if not self.status:
+            return False  # Não tem status atual
 
+        transition = WorkflowTransition.objects.filter(
+            workflow__client=self.client,
+            from_status=self.status,
+            to_status=to_status,
+            allowed_roles__in=[user.role]
+        ).exists()
+
+        return transition
+    
+    def change_status(self, user, to_status):
+        """ Tenta mudar o status do ticket se permitido """
+        if not self.can_transition(user, to_status):
+            raise PermissionError("Você não tem permissão para essa transição.")
+        
+        self.status = to_status
+        self.save()
+    
     def save(self, *args, **kwargs):
-        self.title = self.title.upper().strip()
         if not self.due_date and self.sla:
-            self.due_date = now() + self.sla.resolution_time
+            
+            sla_time = self.sla.get_resolution_time()  # Retorna o timedelta (dias como timedelta)
+            if sla_time:
+                # Calcule a data de vencimento somando o timedelta (SLA) ao tempo atual
+                self.due_date = timezone.now() + sla_time  # Adiciona o timedelta corretamente
         super().save(*args, **kwargs)
 
-    def is_late(self):
-        return bool(self.due_date and now() > self.due_date)
+
+
+
+
+class Workflow(models.Model):
+    client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="workflows")
+    name = models.CharField("Nome do Workflow", max_length=255)
+    description = models.TextField("Descrição do Workflow", blank=True, null=True)
+    initial_status = models.ForeignKey(TicketStatus, on_delete=models.SET_NULL, null=True, related_name="initial_workflows")
+    final_status = models.ForeignKey(TicketStatus, on_delete=models.SET_NULL, null=True, related_name="final_workflows")
+
+    def __str__(self):
+        return self.name
+
+
+class WorkflowTransition(models.Model):
+    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="transitions")
+    from_status = models.ForeignKey(TicketStatus, on_delete=models.CASCADE, related_name="from_transitions")
+    to_status = models.ForeignKey(TicketStatus, on_delete=models.CASCADE, related_name="to_transitions")
+    allowed_roles = models.ManyToManyField(Role, related_name="allowed_transitions")  # Roles que podem realizar essa transição
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('workflow', 'from_status', 'to_status')
+
+    def __str__(self):
+        return f"{self.from_status.name} -> {self.to_status.name}"
+
+
+
+
 
 
 class TicketAlert(models.Model):
@@ -142,3 +224,5 @@ class TicketAlert(models.Model):
     def save(self, *args, **kwargs):
         self.message = self.message.strip()
         super().save(*args, **kwargs)
+
+

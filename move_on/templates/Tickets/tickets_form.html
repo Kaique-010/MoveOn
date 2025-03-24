@@ -1,75 +1,121 @@
 {% extends 'Menu/menu.html' %} {% load static %} {% load custom_filters %}
-<!-- Aqui você carrega o filtro personalizado -->
+<!-- Carrega o filtro personalizado -->
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/stylesform.css' %}" />
 <div class="container">
-  <h2>
-    {% if form.instance.pk %}Editar Ticket{% else %}Criar Novo Ticket{% endif %}
-  </h2>
 
-  <!-- Formulário para criar um novo ticket -->
-  <form method="POST">
-    {% csrf_token %} {% if form.errors %}
-    <div class="alert alert-danger">
-      <strong>Erro!</strong> Corrija os erros abaixo.
-    </div>
-    {% endif %}
-    <div class="row">
-      <div class="col-6">
-        <div class="form-group">
-          <label for="sla">Prioridade:</label>
-          {{ form.sla }} {% if form.sla.errors %}
-          <div class="text-danger">
-            {% for error in form.sla.errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
+  <div class="card-tkt " id="tkt">
+
+    <h2 style="text-align: center; margin-top: 25px; font-size: 20px; ">
+      {% if form.instance.pk %}Editar Ticket{% else %}Criar Novo Ticket{% endif %}
+    </h2>
+    <!-- Formulário para criar um novo ticket -->
+    <form method="POST">
+      {% csrf_token %} {% if form.errors %}
+      <div class="alert alert-danger">
+        <strong>Erro!</strong> Corrija os erros abaixo:
+        <ul>
+          {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      <div class="row">
+        <div class="col-8"></div>
+        <div class="col-4">
+          <div class="form-group">
+            <label for="status">Status Tkt:</label>
+            {{ form.status }}
+            {% if form.status.errors %}
+            <div class="text-danger">
+              {% for error in form.status.errors %}
+              <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
-          {% endif %}
         </div>
       </div>
-      <div class="col-6" style="background-color: {{form.sla.value|get_color}}">
-        <!-- Exibe o valor da prioridade -->
-        {{ form.sla.value|capfirst }}
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="title">Título:</label>
-      {{ form.title }} {% if form.title.errors %}
-      <div class="text-danger">
-        {% for error in form.title.errors %}
-        <p>{{ error }}</p>
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
+      <div class="row">
+        <div class="col-4">
+          <div class="form-group">
+            <label for="sla">Prioridade:</label>
+            {{ form.sla }} {% if form.sla.errors %}
+            <div class="text-danger">
+              {% for error in form.sla.errors %}
+              <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-2" class="priority-bubble">
+          {% if form.instance.sla %}
+          <span style="color: {{ form.instance.sla.priority|get_color }}">
+            {{ form.instance.sla.get_priority_display }}
+          </span>
+          {% endif %}
+        </div>
 
-    <div class="form-group">
-      <label for="description">Descrição:</label>
-      {{ form.description }} {% if form.description.errors %}
-      <div class="text-danger">
-        {% for error in form.description.errors %}
-        <p>{{ error }}</p>
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
 
-    <!-- Campos adicionais do formulário -->
-    <div class="form-group">
-      <label for="assigned_to">Atribuído a:</label>
-      {{ form.assigned_to }} {% if form.assigned_to.errors %}
-      <div class="text-danger">
-        {% for error in form.assigned_to.errors %}
-        <p>{{ error }}</p>
-        {% endfor %}
+        <div class="col-6">
+          <div class="form-group">
+            <label for="title">Título:</label>
+            {{ form.title }} {% if form.title.errors %}
+            <div class="text-danger">
+              {% for error in form.title.errors %}
+              <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
-      {% endif %}
-    </div>
+      <div class="form-group">
+        <label for="client">Cliente:</label>
+        {{ form.client }} {% if form.client.errors %}
+        <div class="text-danger">
+          {% for error in form.client.errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        <label for="description">Descrição:</label>
+        {{ form.description }} {% if form.description.errors %}
+        <div class="text-danger">
+          {% for error in form.description.errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
 
-    <!-- Botões -->
-    <button type="submit" class="btn btn-primary">Criar Ticket</button>
-    <a href="{% url 'ticket_list' %}" class="btn btn-secondary">Cancelar</a>
-  </form>
+      <!-- Campos adicionais do formulário -->
+      <div class="form-group">
+        <label for="assigned_team">Atribuído a:</label>
+        {{ form.assigned_team }} {% if form.assigned_team.errors %}
+        <div class="text-danger">
+          {% for error in form.assigned_team.errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+
+      <<!-- Botões -->
+        {% if form.instance.pk %}
+        <button type="submit" class="btn btn-primary">Editar Tkt</button>
+        {% else %}
+        <button type="submit" class="btn btn-primary">Criar Tkt</button>
+        {% endif %}
+        <a href="{% url 'ticket_list' %}" class="btn btn-secondary">Cancelar</a>
+
+    </form>
+  </div>
 </div>
 {% endblock %}
