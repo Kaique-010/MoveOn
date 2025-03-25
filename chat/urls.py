@@ -1,10 +1,10 @@
-
+# chat/urls.py
 from django.urls import path
 from . import views
-from .views import chat_room
 
 urlpatterns = [
-
-    path('api/tickets/<int:ticket_id>/chat/', views.ticket_chat_messages, name='ticket_chat_messages'),
-    path("chat/<str:room_name>/", chat_room, name="chat_room"),
+    path('<str:room_name>/', views.get_or_create_room, name='get_or_create_room'),
+    path('send/', views.send_message, name='send_message'),
+    path('stream/<str:room_name>/', views.stream_messages, name='stream_messages'),
+    # Outras URLs, se necessário
 ]
