@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chat</title>
+  </head>
+  <body>
+    <h2>Chat</h2>
+    <div id="messages"></div>
+    <input type="text" id="message" placeholder="Digite sua mensagem" />
+    <button onclick="sendMessage()">Enviar</button>
+
+    <script>
+      const socket = new WebSocket("ws://127.0.0.1:8000/ws/chat/sala1/");
+
+      socket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        document.getElementById(
+          "messages"
+        ).innerHTML += `<p><b>${data.username}:</b> ${data.message}</p>`;
+      };
+
+      function sendMessage() {
+        const message = document.getElementById("message").value;
+        socket.send(JSON.stringify({ message: message, username: "User" }));
+      }
+    </script>
+  </body>
+</html>

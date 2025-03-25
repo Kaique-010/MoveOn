@@ -22,10 +22,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
-    'crispy_bootstrap5',
+    'channels',
     'accounts',
-    'move_on'
+    'move_on', 
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -60,8 +60,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+#WSGI_APPLICATION = 'core.wsgi.application'
 
+ASGI_APPLICATION = "app.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],  # Redis local na porta padrão 6379
+        },
+    },
+}
 
 
 DATABASES = {
