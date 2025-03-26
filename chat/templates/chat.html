@@ -1,103 +1,101 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chat</title>
-  </head>
-  <body>
-    <h1>Chat na sala: {{ room_name }}</h1>
+{%extends 'Menu/menu.html'%}
+{%block content%}
+<style>
+  .container {
+    color: #ffffff;
+  }
+</style>
+<div class="container">
+  <h1>Chat na sala: {{ room_name }}</h1>
 
-    <div id="messages"></div>
-    <!-- Contêiner onde as mensagens serão exibidas -->
+  <div id="messages"></div>
+  <!-- Contêiner onde as mensagens serão exibidas -->
 
-    <input type="text" id="messageInput" placeholder="Digite sua mensagem..." />
-    <button id="sendButton">Enviar</button>
+  <input type="text" id="messageInput" placeholder="Digite sua mensagem..." />
+  <button id="sendButton">Enviar</button>
 
-    <script>
-      const roomName = "{{ room_name }}"; // Nome da sala vindo do Django
+  <script>
+    const roomName = "{{ room_name }}"; // Nome da sala vindo do Django
 
-      // Função para enviar a mensagem
-      document
-        .getElementById("sendButton")
-        .addEventListener("click", function () {
-          const message = document.getElementById("messageInput").value;
-          if (message.trim() === "") return; // Não envia mensagem vazia
+    // Função para enviar a mensagem
+    document
+      .getElementById("sendButton")
+      .addEventListener("click", function () {
+        const message = document.getElementById("messageInput").value;
+        if (message.trim() === "") return; // Não envia mensagem vazia
 
-          // Envia a mensagem para o servidor
-          fetch(`/chat/sala1/send/`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": getCookie("csrftoken"), // Envia o token CSRF
-            },
-            body: JSON.stringify({
-              room: roomName,
-              message: message,
-            }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log("Resposta do servidor:", data); // Log a resposta
-              if (data.status === "ok") {
-                // Adiciona a mensagem enviada diretamente ao DOM
-                const messagesContainer = document.getElementById("messages");
 
-                // Cria um novo elemento para a mensagem
-                const messageElement = document.createElement("p");
-                messageElement.textContent = data.message; // A mensagem recebida do servidor
-                messagesContainer.appendChild(messageElement);
+        fetch(`/chat/${roomName}/send/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"), // Envia o token CSRF
+          },
+          body: JSON.stringify({
+            room: roomName,
+            message: message,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Resposta do servidor:", data); // Log a resposta
+            if (data.status === "ok") {
+              // Adiciona a mensagem enviada diretamente ao DOM
+              const messagesContainer = document.getElementById("messages");
 
-                // Limpa o campo de input
-                document.getElementById("messageInput").value = "";
+              // Cria um novo elemento para a mensagem
+              const messageElement = document.createElement("p");
+              messageElement.textContent = data.message; // A mensagem recebida do servidor
+              messagesContainer.appendChild(messageElement);
 
-                // Rola para a última mensagem
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-              }
-            })
-            .catch((error) => console.error("Erro na requisição:", error));
-        });
+              // Limpa o campo de input
+              document.getElementById("messageInput").value = "";
 
-      // Função para pegar o CSRF token do cookie
-      function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-          var cookies = document.cookie.split(";");
-          for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === name + "=") {
-              cookieValue = decodeURIComponent(
-                cookie.substring(name.length + 1)
-              );
-              break;
+              // Rola para a última mensagem
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
+          })
+          .catch((error) => console.error("Erro na requisição:", error));
+      });
+
+    // Função para pegar o CSRF token do cookie
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== "") {
+        var cookies = document.cookie.split(";");
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === name + "=") {
+            cookieValue = decodeURIComponent(
+              cookie.substring(name.length + 1)
+            );
+            break;
           }
         }
-        return cookieValue;
       }
+      return cookieValue;
+    }
 
-      // Conectar ao SSE para receber mensagens em tempo real
-      const eventSource = new EventSource(`/chat/stream/${roomName}/`);
-      eventSource.onmessage = function (event) {
-        // Obtenha a referência ao contêiner de mensagens
-        const messagesContainer = document.getElementById("messages");
-
-        // Cria um novo elemento para a nova mensagem
-        const messageElement = document.createElement("p");
-        messageElement.textContent = event.data; // Mensagem recebida via SSE
-
-        // Adiciona a nova mensagem ao final da conversa
-        messagesContainer.appendChild(messageElement);
-
-        // Rola para a última mensagem
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-        console.log("Nova mensagem recebida:", event.data); // Log da nova mensagem
-      };
-
-      eventSource.onerror = function (event) {
-        console.error("Erro ao receber mensagens do SSE:", event); // Log de erro
-      };
-    </script>
-  </body>
-</html>
+    // Conectar ao SSE para receber mensagens em tempo real
+    const eventSource = new EventSource(`/chat/stream/${roomName}/`);
+    eventSource.onmessage = function (event) {
+      const messagesContainer = document.getElementById("messages");
+      const data = JSON.parse(event.data); // Parseia a mensagem JSON
+      const messageText = data.message;
+  
+      // Verifica se a mensagem já existe no chat antes de adicionar
+      const existingMessages = Array.from(messagesContainer.getElementsByTagName("p"));
+      const alreadyExists = existingMessages.some(msg => msg.textContent === messageText);
+  
+      if (!alreadyExists) {
+          const messageElement = document.createElement("p");
+          messageElement.textContent = messageText;
+          messagesContainer.appendChild(messageElement);
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+  
+      console.log("Nova mensagem recebida:", messageText);
+  };
+  </script>
+</div>
+{%endblock%}

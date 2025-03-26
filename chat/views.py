@@ -1,12 +1,13 @@
 import json
 import time
 from django.http import JsonResponse, HttpResponse
+from django.http import StreamingHttpResponse
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from .models import ChatRoom, Message
 from collections import deque
 
-# Usamos uma lista para armazenar as conexões ativas de SSE
-active_connections = []
+
 
 def send_message(request, room_name):
     if request.method == "POST":
@@ -14,14 +15,9 @@ def send_message(request, room_name):
             data = json.loads(request.body)
             user = request.user if request.user.is_authenticated else None
 
-            room, _ = ChatRoom.objects.get_or_create(name=room_name)
+            room = get_object_or_404(ChatRoom, name=room_name)  # Agora levanta erro 404 se a sala não existir
             message = Message.objects.create(room=room, user=user, text=data["message"])
 
-            # Aqui você envia a mensagem para todas as conexões SSE
-            for connection in active_connections:
-                connection.write(f"data: {message.text}\n\n")
-            
-            # Retorna a resposta imediatamente para quem enviou a mensagem
             return JsonResponse({"status": "ok", "message": message.text})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
@@ -30,33 +26,31 @@ def send_message(request, room_name):
 
 
 def stream_messages(request, room_name):
-    room = ChatRoom.objects.get(name=room_name)
+    try:
+        room = ChatRoom.objects.get(name=room_name)
+    except ChatRoom.DoesNotExist:
+        return HttpResponse("Sala não encontrada", status=404)
 
-    # Criar uma função para o stream de SSE
     def event_stream():
         last_message = None
         while True:
-            room.refresh_from_db()  # Atualiza o objeto da sala para obter a última mensagem
-            last_message_instance = room.messages.last()  # Verifique se está pegando a última mensagem corretamente
-            if last_message_instance and last_message_instance.text != last_message:
-                last_message = last_message_instance.text
-                yield f"data: {last_message}\n\n"
-            time.sleep(1)  # Aguarda um segundo antes de verificar novamente
+            try:
+                room.refresh_from_db()
+                last_message_instance = room.messages.last()
 
-    # Criar a resposta do evento
-    response = HttpResponse(event_stream(), content_type="text/event-stream")
+                if last_message_instance and last_message_instance.text != last_message:
+                    last_message = last_message_instance.text
+                    yield f"data: {json.dumps({'message': last_message})}\n\n"
+                
+                time.sleep(1)
+            except Exception as e:
+                print(f"Erro no SSE: {e}")
+                break
+
+    response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
     response['Cache-Control'] = 'no-cache'
-    response['Connection'] = 'keep-alive'
 
-    # Adiciona essa conexão à lista de conexões ativas
-    active_connections.append(response)
     
-    # Remove a conexão da lista quando ela se desconectar
-    def remove_connection():
-        active_connections.remove(response)
-
-    response.close = remove_connection
-
     return response
 
 
