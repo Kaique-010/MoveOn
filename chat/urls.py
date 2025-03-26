@@ -1,10 +1,8 @@
-# chat/urls.py
 from django.urls import path
-from . import views
+from .views import send_message, stream_messages, get_or_create_room
 
 urlpatterns = [
-    path('<str:room_name>/', views.get_or_create_room, name='get_or_create_room'),
-    path('send/', views.send_message, name='send_message'),
-    path('stream/<str:room_name>/', views.stream_messages, name='stream_messages'),
-    # Outras URLs, se necessário
+    path("<str:room_name>/", get_or_create_room, name="chat_room"),
+    path("<str:room_name>/send/", send_message, name="send_message"),  # Adicionar room_name à URL
+    path("stream/<str:room_name>/", stream_messages, name="stream_messages"),
 ]

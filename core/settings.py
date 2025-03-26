@@ -98,6 +98,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CSRF_TRUSTED_ORIGINS = ['https://example.com', 'http://localhost:8000']  # Altere conforme o seu ambiente
+
 
 
 LANGUAGE_CODE = 'pt-br'

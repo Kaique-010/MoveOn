@@ -1,52 +1,68 @@
 import json
-from django.http import JsonResponse
+import time
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
 from .models import ChatRoom, Message
+from collections import deque
 
-def chat_room(request, room_name):
-    return render(request, "chat.html", {"room_name": room_name})
+# Usamos uma lista para armazenar as conexões ativas de SSE
+active_connections = []
 
-@csrf_exempt
-def send_message(request):
+def send_message(request, room_name):
     if request.method == "POST":
         try:
-            room_name = request.POST.get("room")
-            message = request.POST.get("message")
+            data = json.loads(request.body)
+            user = request.user if request.user.is_authenticated else None
+
+            room, _ = ChatRoom.objects.get_or_create(name=room_name)
+            message = Message.objects.create(room=room, user=user, text=data["message"])
+
+            # Aqui você envia a mensagem para todas as conexões SSE
+            for connection in active_connections:
+                connection.write(f"data: {message.text}\n\n")
             
-            if room_name and message:
-                room = ChatRoom.objects.get(name=room_name)
-                # Crie um objeto Message ou similar para armazenar a mensagem
-                # Exemplo:
-                # Message.objects.create(user=request.user, room=room, content=message)
-                return JsonResponse({"status": "ok"})
-            else:
-                return JsonResponse({"status": "fail", "message": "Invalid data"})
+            # Retorna a resposta imediatamente para quem enviou a mensagem
+            return JsonResponse({"status": "ok", "message": message.text})
         except Exception as e:
-            return JsonResponse({"status": "fail", "message": str(e)})
-    return JsonResponse({"status": "fail", "message": "Invalid method"})
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "Método não permitido"}, status=405)
+
 
 def stream_messages(request, room_name):
-    # Gerar uma resposta SSE
     room = ChatRoom.objects.get(name=room_name)
-    
+
+    # Criar uma função para o stream de SSE
     def event_stream():
-        for message in room.messages.all():
-            yield f"data: {message.text}\n\n"
-    
+        last_message = None
+        while True:
+            room.refresh_from_db()  # Atualiza o objeto da sala para obter a última mensagem
+            last_message_instance = room.messages.last()  # Verifique se está pegando a última mensagem corretamente
+            if last_message_instance and last_message_instance.text != last_message:
+                last_message = last_message_instance.text
+                yield f"data: {last_message}\n\n"
+            time.sleep(1)  # Aguarda um segundo antes de verificar novamente
+
+    # Criar a resposta do evento
     response = HttpResponse(event_stream(), content_type="text/event-stream")
     response['Cache-Control'] = 'no-cache'
     response['Connection'] = 'keep-alive'
+
+    # Adiciona essa conexão à lista de conexões ativas
+    active_connections.append(response)
+    
+    # Remove a conexão da lista quando ela se desconectar
+    def remove_connection():
+        active_connections.remove(response)
+
+    response.close = remove_connection
+
     return response
 
 
 def get_or_create_room(request, room_name):
-    # Verifica se a sala já existe
     room, created = ChatRoom.objects.get_or_create(name=room_name)
-    
-    # Se a sala foi criada, podemos adicionar algum código aqui para notificar ou fazer algo mais
     if created:
         print(f'Sala {room_name} criada com sucesso.')
 
-    return render(request, 'chat/room.html', {'room_name': room.name})
+    return render(request, 'chat.html', {'room_name': room.name})
