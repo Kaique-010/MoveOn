@@ -1,0 +1,132 @@
+/* Container geral */
+.container {
+  color: #ffffff;
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 20px;
+  background-color: #284557; /* Fundo suave para destacar as mensagens */
+  border-radius: 12px; /* Bordas arredondadas para uma aparência moderna */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra discreta */
+}
+
+/* Cabeçalho */
+header h1 {
+  text-align: center;
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  color: aliceblue;
+}
+
+/* Container de mensagens */
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1); /* Efeito interno */
+  max-height: 400px; /* Limite de altura com rolagem */
+  overflow-y: auto; /* Habilitar rolagem se necessário */
+}
+
+/* Estilo das mensagens */
+.message {
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 60%;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  font-size: 0.9em;
+}
+
+.user-message {
+  align-self: flex-start;
+  color: #751717;
+  border-radius: 10px 10px 0 10px; /* Curvas personalizadas */
+}
+
+.attendant-message {
+  align-self: flex-end;
+  color: #1e3a4b;
+  border-radius: 10px 10px 10px 0;
+}
+
+/* Campo de entrada de texto */
+.message-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid #ddd; /* Linha separadora */
+}
+
+#messageInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+#sendButton,
+#recordButton {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  background-color: #676a6d;
+}
+
+#sendButton:hover,
+#recordButton:hover {
+  background-color: #d1ae44;
+}
+
+/* Estilo do botão de gravação */
+.audio-button {
+  margin-top: 10px;
+}
+
+/* Gravação de áudio */
+.audio-recording {
+  display: none; /* Inicialmente escondido */
+}
+
+.audio-recording.active {
+  display: block; /* Exibe quando ativo */
+}
+
+.audio-recording p {
+  color: #ff5722;
+  font-weight: bold;
+}
+
+#stopButton {
+  margin-top: 10px;
+  background-color: #f44336;
+  display: none;
+}
+
+#stopButton.active {
+  display: block;
+}
+
+#stopButton:hover {
+  background-color: #e53935;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .message-input {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .container-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+}

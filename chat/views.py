@@ -4,8 +4,10 @@ from django.http import JsonResponse, HttpResponse
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from .models import ChatRoom, Message
-from move_on.models import SLA, SLAPriority, Ticket
+from move_on.models import SLA, SLAPriority, Team, Ticket
 from collections import deque
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -16,12 +18,16 @@ import os
 def get_or_create_room(request):
     # Obter a instância do SLA com a prioridade LOW
     sla_instance = SLA.objects.get(priority=SLAPriority.LOW)
+   
+   #filtramos pela instancia de Team ao buscar o nome 
+    default_team = Team.objects.filter(name="Técnicos").first()
     
-    # Agora, associamos a instância do SLA ao criar o ticket
+    # Agora, associamos as instâncias ao criar o ticket
     ticket = Ticket.objects.create(
         client=None,
-        #created_by=user,  # Aqui você pode preencher o usuário quando disponível
-        sla=sla_instance  # Passa a instância do SLA ao invés da string
+        sla=sla_instance,  # Passa a instância do SLA ao invés da string
+        created_by = request.user if request.user.is_authenticated else None,
+        assigned_team = default_team
     )
     
     room = ChatRoom.objects.create(ticket=ticket)
@@ -91,28 +97,29 @@ def stream_messages(request, ticket_id):
 
 @csrf_exempt
 def send_audio(request, ticket_id):
-    if request.method == "POST":
+    if request.method == "POST" and request.FILES.get('audio'):
         try:
-            # Lê o conteúdo da requisição
-            data = json.loads(request.body.decode('utf-8'))
-            audio_url = data.get('audio')  # Pega a URL do áudio que foi enviada
+            # Pega o arquivo de áudio enviado
+            audio_file = request.FILES['audio']
 
-            if not audio_url:
-                return JsonResponse({"status": "error", "message": "Áudio não enviado."}, status=400)
+            # Salva o arquivo no sistema de arquivos
+            audio_path = default_storage.save(f'audios/{ticket_id}.wav', ContentFile(audio_file.read()))
 
-            # Aqui, você pode armazenar o áudio no banco de dados ou fazer o que for necessário.
-            # No caso, estamos apenas retornando a URL do áudio.
+            # Você pode adicionar o processamento necessário aqui
+
+            # Retorna a URL ou caminho do áudio salvo
+            audio_url = default_storage.url(audio_path)
 
             return JsonResponse({
                 "status": "ok",
                 "sender": "user",
                 "sender_name": "Usuário",
-                "audio_url": audio_url  # Retorna a URL do áudio
+                "audio_url": audio_url  # Retorna o caminho do áudio
             })
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     else:
-        return JsonResponse({"status": "error", "message": "Método não permitido."}, status=405)
+        return JsonResponse({"status": "error", "message": "Áudio não enviado ou método não permitido."}, status=400)
 
 
 @csrf_exempt
