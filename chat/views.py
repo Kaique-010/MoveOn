@@ -49,7 +49,6 @@ def send_message(request, ticket_id):
 
     return JsonResponse({"error": "Método não permitido"}, status=405)
 
-
 def stream_messages(request, ticket_id):
     try:
         room = ChatRoom.objects.get(ticket__id=ticket_id)
@@ -57,10 +56,6 @@ def stream_messages(request, ticket_id):
         return HttpResponse("Sala não encontrada", status=404)
 
     def event_stream():
-        """chamamos o objeto de ultima mensagem de ChatRoom para fazer um loop, se enquanto o estiver passando 
-        MEnsagens refresh no banco aguarda um segundo para passar a próxima mensagem 
-        passa os dados em json 
-        """
         last_message = None
         while True:
             try:
@@ -71,24 +66,26 @@ def stream_messages(request, ticket_id):
                     last_message = last_message_instance.text
                     sender = "user" if last_message_instance.user == room.ticket.client else "attendant"
                     
-                    # Defina o nome para o remetente
+                    # Nome do remetente
                     if sender == "user":
-                        sender_name = room.ticket.client.user.username  # Nome do cliente
+                        sender_name = room.ticket.client.user.username
                     else:
-                        sender_name = last_message_instance.user.username  # Nome do atendente
+                        sender_name = last_message_instance.user.username
 
+                    # Emite os dados da mensagem para o cliente
                     yield f"data: {json.dumps({'message': last_message, 'sender': sender, 'sender_name': sender_name})}\n\n"
                 
                 time.sleep(1)
             except Exception as e:
                 print(f"Erro no SSE: {e}")
                 break
-        """Aqui ocorre o refresh    em StreamingHttpREsponse onde mantém a sala e a conversa aberta"""
+
     response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
     response['Cache-Control'] = 'no-cache'
 
-    
     return response
+
+
 
 
 
