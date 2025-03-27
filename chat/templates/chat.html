@@ -1,101 +1,151 @@
-{%extends 'Menu/menu.html'%}
-{%block content%}
+{% extends 'Menu/menu.html' %} {% block content %}
 <style>
   .container {
     color: #ffffff;
   }
+
+  .messages-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .message {
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 60%;
+    margin-bottom: 10px;
+  }
+
+  .user-message {
+    align-self: flex-start;
+    background-color: #4caf50; /* Cor para mensagens do usuário */
+    color: white;
+  }
+
+  .attendant-message {
+    align-self: flex-end;
+    background-color: #2196f3; /* Cor para mensagens do atendente */
+    color: white;
+  }
+
+  .message-sender {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  #messageInput {
+    width: 80%;
+    padding: 8px;
+    margin-right: 10px;
+  }
+
+  #sendButton {
+    padding: 8px 16px;
+  }
 </style>
+
 <div class="container">
-  <h1>Chat na sala: {{ room_name }}</h1>
+  <h1>Chat do Ticket #{{ ticket_id }}</h1>
 
-  <div id="messages"></div>
-  <!-- Contêiner onde as mensagens serão exibidas -->
+  <div class="messages-container" id="messages">
+    <!-- Contêiner das mensagens -->
+  </div>
 
-  <input type="text" id="messageInput" placeholder="Digite sua mensagem..." />
-  <button id="sendButton">Enviar</button>
+  <div class="message-input">
+    <input type="text" id="messageInput" placeholder="Digite sua mensagem..." />
+    <button id="sendButton">Enviar</button>
+  </div>
 
   <script>
-    const roomName = "{{ room_name }}"; // Nome da sala vindo do Django
+    const ticketId = "{{ ticket_id }}"; // Pegamos o ID do ticket vindo do Django
+    const userId = "{{ user.id }}"; // Adiciona o ID do usuário, pode ser recuperado do Django
 
-    // Função para enviar a mensagem
+    // Função para enviar mensagem
     document
       .getElementById("sendButton")
       .addEventListener("click", function () {
         const message = document.getElementById("messageInput").value;
-        if (message.trim() === "") return; // Não envia mensagem vazia
+        if (message.trim() === "") return; // Evita mensagens vazias
 
-
-        fetch(`/chat/${roomName}/send/`, {
+        fetch(`/chat/${ticketId}/send/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"), // Envia o token CSRF
+            "X-CSRFToken": getCookie("csrftoken"),
           },
-          body: JSON.stringify({
-            room: roomName,
-            message: message,
-          }),
+          body: JSON.stringify({ message: message }),
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log("Resposta do servidor:", data); // Log a resposta
             if (data.status === "ok") {
-              // Adiciona a mensagem enviada diretamente ao DOM
-              const messagesContainer = document.getElementById("messages");
-
-              // Cria um novo elemento para a mensagem
-              const messageElement = document.createElement("p");
-              messageElement.textContent = data.message; // A mensagem recebida do servidor
-              messagesContainer.appendChild(messageElement);
-
-              // Limpa o campo de input
-              document.getElementById("messageInput").value = "";
-
-              // Rola para a última mensagem
-              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+              addMessageToChat(data.message, "user", data.sender_name); // Passando o nome do remetente
+              document.getElementById("messageInput").value = ""; // Limpa o campo
             }
           })
-          .catch((error) => console.error("Erro na requisição:", error));
+          .catch((error) => console.error("Erro ao enviar mensagem:", error));
       });
 
-    // Função para pegar o CSRF token do cookie
+    // Adiciona mensagem ao chat
+    function addMessageToChat(text, sender, senderName) {
+      const messagesContainer = document.getElementById("messages");
+      const messageElement = document.createElement("div");
+
+      // Adiciona o nome do remetente acima da mensagem
+      const senderElement = document.createElement("p");
+      senderElement.textContent = senderName;
+      senderElement.classList.add("message-sender");
+      messageElement.appendChild(senderElement);
+
+      // Adiciona a mensagem
+      const messageText = document.createElement("p");
+      messageText.textContent = text;
+      messageElement.appendChild(messageText);
+
+      // Adiciona a classe do remetente
+      if (sender === "user") {
+        messageElement.classList.add("message", "user-message");
+      } else {
+        messageElement.classList.add("message", "attendant-message");
+      }
+
+      messagesContainer.appendChild(messageElement);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight; // Rola para baixo
+    }
+
+    // Obtém CSRF token do cookie
     function getCookie(name) {
-      var cookieValue = null;
-      if (document.cookie && document.cookie !== "") {
-        var cookies = document.cookie.split(";");
-        for (var i = 0; i < cookies.length; i++) {
-          var cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === name + "=") {
-            cookieValue = decodeURIComponent(
-              cookie.substring(name.length + 1)
-            );
-            break;
+      let cookieValue = null;
+      if (document.cookie) {
+        document.cookie.split(";").forEach((cookie) => {
+          cookie = cookie.trim();
+          if (cookie.startsWith(name + "=")) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
           }
-        }
+        });
       }
       return cookieValue;
     }
 
     // Conectar ao SSE para receber mensagens em tempo real
-    const eventSource = new EventSource(`/chat/stream/${roomName}/`);
+    const eventSource = new EventSource(`/chat/stream/${ticketId}/`);
     eventSource.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+
+      // Evita mensagens duplicadas
       const messagesContainer = document.getElementById("messages");
-      const data = JSON.parse(event.data); // Parseia a mensagem JSON
-      const messageText = data.message;
-  
-      // Verifica se a mensagem já existe no chat antes de adicionar
-      const existingMessages = Array.from(messagesContainer.getElementsByTagName("p"));
-      const alreadyExists = existingMessages.some(msg => msg.textContent === messageText);
-  
+      const existingMessages = Array.from(
+        messagesContainer.getElementsByTagName("p")
+      );
+      const alreadyExists = existingMessages.some(
+        (msg) => msg.textContent === data.message
+      );
+
       if (!alreadyExists) {
-          const messageElement = document.createElement("p");
-          messageElement.textContent = messageText;
-          messagesContainer.appendChild(messageElement);
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        addMessageToChat(data.message, data.sender, data.sender_name);
       }
-  
-      console.log("Nova mensagem recebida:", messageText);
-  };
+    };
   </script>
 </div>
-{%endblock%}
+
+{% endblock %}

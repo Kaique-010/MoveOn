@@ -127,16 +127,16 @@ class Team(models.Model):
     
 
 class Ticket(models.Model):
-    client = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name="tickets")
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_tickets")
+    client = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name="tickets", null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_tickets", null=True, blank=True)
     assigned_team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets")
     sla = models.ForeignKey(SLA, on_delete=models.SET_NULL, null=True, blank=True)
-    title = models.CharField("Título", max_length=255)
-    description = models.TextField("Descrição")
-    status = models.ForeignKey(TicketStatus, on_delete=models.SET_NULL, null=True, blank=True, default="Novo")
+    title = models.CharField("Título", max_length=255, null=True, blank=True)
+    description = models.TextField("Descrição", null=True, blank=True)
+    status = models.ForeignKey(TicketStatus, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField("Criado em", auto_now_add=True)
     updated_at = models.DateTimeField("Atualizado em", auto_now=True)
-    due_date = models.DateTimeField("Previsão",null=True, blank=True)
+    due_date = models.DateTimeField("Previsão", null=True, blank=True)
 
     class Meta:
         db_table = "tickets"

@@ -63,8 +63,7 @@ class TicketUpdate(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("ticket_list")
 
     def get_queryset(self):
-        user = self.request.user
-        return Ticket.objects.filter(client=user.client)
+        return Ticket.objects.all()
     
 
 
