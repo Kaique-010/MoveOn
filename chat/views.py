@@ -7,6 +7,10 @@ from django.shortcuts import render
 from .models import ChatRoom, Message
 from move_on.models import SLA, SLAPriority, Ticket
 from collections import deque
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import base64
+import os
 
 
 def get_or_create_room(request):
@@ -87,3 +91,38 @@ def stream_messages(request, ticket_id):
     return response
 
 
+
+@csrf_exempt
+def send_audio(request, ticket_id):
+    if request.method == "POST":
+        try:
+            # Lê o conteúdo da requisição
+            data = json.loads(request.body.decode('utf-8'))
+            audio_url = data.get('audio')  # Pega a URL do áudio que foi enviada
+
+            if not audio_url:
+                return JsonResponse({"status": "error", "message": "Áudio não enviado."}, status=400)
+
+            # Aqui, você pode armazenar o áudio no banco de dados ou fazer o que for necessário.
+            # No caso, estamos apenas retornando a URL do áudio.
+
+            return JsonResponse({
+                "status": "ok",
+                "sender": "user",
+                "sender_name": "Usuário",
+                "audio_url": audio_url  # Retorna a URL do áudio
+            })
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    else:
+        return JsonResponse({"status": "error", "message": "Método não permitido."}, status=405)
+
+
+@csrf_exempt
+def send_image(request, ticket_id):
+    if request.method == "POST":
+        image_data = request.POST.get("image")  # Aqui você pega a imagem enviada
+        # Salve a imagem e retorne a URL ou o caminho do arquivo
+
+        # Faça o processamento da imagem (armazenamento, etc)
+        return JsonResponse({"status": "ok", "sender": "user", "sender_name": request.user.username, "file_url": "image_url"})

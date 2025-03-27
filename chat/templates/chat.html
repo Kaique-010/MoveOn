@@ -35,13 +35,24 @@
   }
 
   #messageInput {
-    width: 80%;
+    width: 60%;
     padding: 8px;
-    margin-right: 10px;
   }
 
   #sendButton {
     padding: 8px 16px;
+  }
+
+  .audio-button {
+    margin-top: 10px;
+  }
+
+  .audio-recording {
+    display: none;
+  }
+
+  .audio-recording.active {
+    display: block;
   }
 </style>
 
@@ -55,11 +66,20 @@
   <div class="message-input">
     <input type="text" id="messageInput" placeholder="Digite sua mensagem..." />
     <button id="sendButton">Enviar</button>
+
+    <!-- Botão para gravar áudio -->
+    <button id="recordButton" class="audio-button">Gravar Áudio</button>
+    <div id="audioRecording" class="audio-recording">
+      <p>Gravando...</p>
+      <button id="stopButton">Parar</button>
+    </div>
   </div>
 
   <script>
     const ticketId = "{{ ticket_id }}"; // Pegamos o ID do ticket vindo do Django
-    const userId = "{{ user.id }}"; // Adiciona o ID do usuário, pode ser recuperado do Django
+
+    let mediaRecorder;
+    let audioChunks = [];
 
     // Função para enviar mensagem
     document
@@ -79,15 +99,73 @@
           .then((response) => response.json())
           .then((data) => {
             if (data.status === "ok") {
-              addMessageToChat(data.message, "user", data.sender_name); // Passando o nome do remetente
+              addMessageToChat(data.message, data.sender, data.sender_name);
               document.getElementById("messageInput").value = ""; // Limpa o campo
             }
           })
           .catch((error) => console.error("Erro ao enviar mensagem:", error));
       });
 
-    // Adiciona mensagem ao chat
-    function addMessageToChat(text, sender, senderName) {
+    // Função para gravar áudio
+    document
+      .getElementById("recordButton")
+      .addEventListener("click", startRecording);
+    document
+      .getElementById("stopButton")
+      .addEventListener("click", stopRecording);
+
+    function startRecording() {
+      document.getElementById("audioRecording").classList.add("active");
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+
+          mediaRecorder.ondataavailable = (event) => {
+            audioChunks.push(event.data);
+          };
+
+          mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            sendAudio(audioUrl);
+          };
+        })
+        .catch((err) => console.error("Erro ao acessar o microfone: ", err));
+    }
+
+    function stopRecording() {
+      mediaRecorder.stop();
+      document.getElementById("audioRecording").classList.remove("active");
+    }
+
+    // Função para enviar áudio
+    function sendAudio(audioUrl) {
+      fetch(`/chat/${ticketId}/send-audio/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({ audio: audioUrl }), // Envia a URL do áudio
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "ok") {
+            addMessageToChat(
+              "Áudio enviado!",
+              data.sender,
+              data.sender_name,
+              audioUrl
+            );
+          }
+        })
+        .catch((error) => console.error("Erro ao enviar áudio:", error));
+    }
+
+    // Função para adicionar a mensagem no chat
+    function addMessageToChat(text, sender, senderName, audioUrl) {
       const messagesContainer = document.getElementById("messages");
       const messageElement = document.createElement("div");
 
@@ -97,10 +175,17 @@
       senderElement.classList.add("message-sender");
       messageElement.appendChild(senderElement);
 
-      // Adiciona a mensagem
-      const messageText = document.createElement("p");
-      messageText.textContent = text;
-      messageElement.appendChild(messageText);
+      // Adiciona o texto ou áudio à mensagem
+      if (audioUrl) {
+        const audioElement = document.createElement("audio");
+        audioElement.controls = true;
+        audioElement.src = audioUrl;
+        messageElement.appendChild(audioElement);
+      } else {
+        const messageText = document.createElement("p");
+        messageText.textContent = text;
+        messageElement.appendChild(messageText);
+      }
 
       // Adiciona a classe do remetente
       if (sender === "user") {
@@ -126,25 +211,6 @@
       }
       return cookieValue;
     }
-
-    // Conectar ao SSE para receber mensagens em tempo real
-    const eventSource = new EventSource(`/chat/stream/${ticketId}/`);
-    eventSource.onmessage = function (event) {
-      const data = JSON.parse(event.data);
-
-      // Evita mensagens duplicadas
-      const messagesContainer = document.getElementById("messages");
-      const existingMessages = Array.from(
-        messagesContainer.getElementsByTagName("p")
-      );
-      const alreadyExists = existingMessages.some(
-        (msg) => msg.textContent === data.message
-      );
-
-      if (!alreadyExists) {
-        addMessageToChat(data.message, data.sender, data.sender_name);
-      }
-    };
   </script>
 </div>
 
