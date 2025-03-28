@@ -4,7 +4,7 @@ from django.db.models.signals import post_migrate
 from django.db import migrations
 from django.dispatch import receiver
 import requests
-from .models import SLA, Role, SLAPriority, Team, TicketAlert, Ticket, TicketStatus
+from .models import SLA, Category, Role, SLAPriority, Team, TicketAlert, Ticket, TicketStatus
 
 @receiver(post_save, sender=Ticket)
 def send_alert(sender, instance, **kwargs):
@@ -62,12 +62,20 @@ def load_default_data(sender, **kwargs):
         Team.objects.create(name="Clientes"),
         Team.objects.create(name="Técnicos"),
         print("Criados os Times")
+    
+    if not Category.objects.exists():
+        Category.objects.create(name="Chat"),
+        Category.objects.create(name="Corretivas"),
+        Category.objects.create(name="Atendimentos normais"),
+        Category.objects.create(name="Atendimentos Emergenciais"),
+        Category.objects.create(name="Melhorias"),
+        print("Criadas as Categorias")
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        # Adicione a dependência para a migration anterior se houver
+        
     ]
 
     operations = [

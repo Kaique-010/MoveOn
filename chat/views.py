@@ -37,9 +37,6 @@ def get_or_create_room(request):
     # Renderizamos a sala com o ID do ticket
     return render(request, 'chat.html', {'ticket_id': ticket.id})
 
-
-
-
 def send_message(request, ticket_id):
     if request.method == "POST":
         try:
@@ -91,42 +88,48 @@ def stream_messages(request, ticket_id):
 
     return response
 
-
-
-
-
+#Função para envio de Audios
 @csrf_exempt
 def send_audio(request, ticket_id):
     if request.method == "POST" and request.FILES.get('audio'):
         try:
-            # Pega o arquivo de áudio enviado
             audio_file = request.FILES['audio']
-
-            # Salva o arquivo no sistema de arquivos
             audio_path = default_storage.save(f'audios/{ticket_id}.wav', ContentFile(audio_file.read()))
-
-            # Você pode adicionar o processamento necessário aqui
-
-            # Retorna a URL ou caminho do áudio salvo
             audio_url = default_storage.url(audio_path)
 
             return JsonResponse({
                 "status": "ok",
                 "sender": "user",
                 "sender_name": "Usuário",
-                "audio_url": audio_url  # Retorna o caminho do áudio
+                "audio_url": audio_url  
             })
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     else:
         return JsonResponse({"status": "error", "message": "Áudio não enviado ou método não permitido."}, status=400)
 
-
+#função para enviar prints
 @csrf_exempt
 def send_image(request, ticket_id):
     if request.method == "POST":
-        image_data = request.POST.get("image")  # Aqui você pega a imagem enviada
-        # Salve a imagem e retorne a URL ou o caminho do arquivo
+        if "image" in request.FILES:
+            image = request.FILES["image"]
+            print(f"Imagem recebida: {image.name}") 
+        else:
+            print("Nenhuma imagem foi enviada.") 
 
-        # Faça o processamento da imagem (armazenamento, etc)
-        return JsonResponse({"status": "ok", "sender": "user", "sender_name": request.user.username, "file_url": "image_url"})
+        if "image" in request.FILES:
+           
+            upload_dir = "uploads/chat_images/"
+            file_path = os.path.join(upload_dir, f"{ticket_id}_{image.name}")
+            saved_path = default_storage.save(file_path, ContentFile(image.read()))
+            file_url = default_storage.url(saved_path)
+
+            return JsonResponse({
+                "status": "ok",
+                "sender": "user",
+                "sender_name": request.user.username,
+                "file_url": file_url
+            })
+
+        return JsonResponse({"status": "error", "message": "Nenhuma imagem foi enviada"}, status=400)

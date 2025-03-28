@@ -9,6 +9,15 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra discreta */
 }
 
+/* Container dos botões */
+.container-buttons {
+  display: flex;
+  align-items: center; /* Alinha os botões verticalmente */
+  justify-content: flex-start; /* Alinha os botões à esquerda */
+  gap: 10px; /* Distância entre os botões */
+  margin-bottom: 10px; /* Distância abaixo dos botões */
+}
+
 /* Cabeçalho */
 header h1 {
   text-align: center;
@@ -65,18 +74,22 @@ header h1 {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 0.9em;
 }
 
 #sendButton,
 #recordButton {
-  padding: 6px 14px;
+  padding: 6px 6px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   color: white;
   background-color: #676a6d;
+}
+
+#sendButton {
+  margin-top: 9px;
 }
 
 #sendButton:hover,
@@ -99,18 +112,24 @@ header h1 {
 }
 
 .audio-recording p {
-  color: #ff5722;
-  font-weight: bold;
+  margin: 0;
+  font-size: 8px;
+  color: #e8b1b1;
 }
 
 #stopButton {
-  margin-top: 10px;
+  margin-top: 4px;
   background-color: #f44336;
-  display: none;
+  display: none; /* Inicialmente escondido */
+  padding: 6px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
 }
 
 #stopButton.active {
-  display: block;
+  display: inline-block; /* Torna visível quando ativo */
 }
 
 #stopButton:hover {
@@ -128,5 +147,12 @@ header h1 {
     display: flex;
     flex-direction: column;
     gap: 5px;
+  }
+
+  #sendButton,
+  #recordButton,
+  #stopButton {
+    width: 100%;
+    font-size: 1em; /* Ajusta o tamanho dos botões para dispositivos móveis */
   }
 }

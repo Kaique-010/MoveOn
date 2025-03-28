@@ -74,6 +74,16 @@ CHANNEL_LAYERS = {
 
 
 DATABASES = {
+    'move_on': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'move_on',
+        'USER': 'postgres',
+        'PASSWORD': '@spartacus201@',
+        'HOST': 'localhost', 
+        'PORT': '5432',
+    },
+
+
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',

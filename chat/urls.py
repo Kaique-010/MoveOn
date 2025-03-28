@@ -8,7 +8,7 @@ urlpatterns = [
     path("<int:ticket_id>/send/", send_message, name="send_message"),
     path('<int:ticket_id>/stream/', stream_messages, name='stream_messages'), 
     path("<int:ticket_id>/send-audio/", send_audio, name="send_audio"),
-    path("<int:ticket_id>/send-image/", send_image, name="send_image"),
+    path("<int:ticket_id>/send_image/", send_image, name="send_image"),
 ] 
 
 # Adicionar configuração de arquivos estáticos e de mídia

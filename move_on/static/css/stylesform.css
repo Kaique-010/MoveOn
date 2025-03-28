@@ -10,11 +10,10 @@
 }
 
 .form-group input,
-.form-group select,
-.form-group textarea {
-  font-size: 1, px; /* Ajustando o tamanho da fonte nos campos de input */
+.form-group select {
+  font-size: 0.4rem, 1px; /* Ajustando o tamanho da fonte nos campos de input */
   padding: 8px 12px; /* Reduzindo o padding para um campo mais compacto */
-  height: 30px; /* Altura mais reduzida para os inputs */
+  height: 36px; /* Altura mais reduzida para os inputs */
   border-radius: 5px; /* Bordas arredondadas para um visual mais clean */
   border: 1px solid #ddd; /* Borda fina */
   width: 100%; /* Garantindo que ocupe toda a largura disponível */
@@ -97,6 +96,6 @@ h2 {
 #tkt {
   background-color: #1e3a4b;
   border-radius: 10px;
-  padding: 50px;
-  font-size: 10px;
+  padding: 40px;
+  font-size: 8px;
 }

@@ -1,43 +1,44 @@
-{% extends 'Menu/menu.html' %}
-{% load static %}
-{% block content %}
-<link rel="stylesheet" href="{% static 'css/cstyles.css' %}">
+{% extends 'Menu/menu.html' %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/cstyles.css' %}" />
 <script>
   const ticket_id = "{{ ticket_id }}";
 </script>
 
 <script src="{% static 'js/cscripts.js' %}"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
 
 <div class="container">
   <!--Cabeçalho-->
   <header>
-    <h1>Chat do Ticket #{{ ticket_id }}</h1>
+    <h1>Chat/Ticket #{{ ticket_id }}</h1>
   </header>
 
   <!-- Conteudo das Mensagens  -->
-  <main class="messages-container" id="messages">
-  </main>
+  <main class="messages-container" id="messages"></main>
 
   <!-- Area de Entrada de textos-->
   <footer class="message-input">
-    <input type="text" id="messageInput" placeholder="Digite sua mensagem..."
-      aria-label="Campo de Entrada para mensagens" />
+    <input type="text" id="messageInput" placeholder="Digite sua mensagem..." />
+    <img id="image-preview" style="max-width: 200px; display: none" />
   </footer>
 
-  <!--conteiner dos botões para organizar melhor-->
+  <!-- Contêiner dos botões para organizar melhor -->
   <div class="container-buttons">
-    <button id="sendButton">
-      <i class="fa fa-paper-plane"></i> Enviar
-    </button>
+    <button id="sendButton"><i class="fa fa-paper-plane"></i> Enviar</button>
     <button id="recordButton" class="audio-button">
       <i class="fa fa-microphone"></i> Áudio
     </button>
-    <div id="audioRecording" class="audio-recording" style="display: none;">
+
+    <!-- Colocando o botão de "Parar" fora do div, mas com controle de visibilidade via JS -->
+    <button id="stopButton" style="display: none">Parar</button>
+
+    <div id="audioRecording" class="audio-recording" style="display: none">
       <p>Gravando...</p>
-      <button id="stopButton">Parar</button>
     </div>
   </div>
-</div>
 
-{% endblock %}
+  {% endblock %}
+</div>

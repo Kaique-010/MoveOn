@@ -125,6 +125,16 @@ class Team(models.Model):
     def __str__(self):
         return f"{self.name}"
     
+class Category(models.Model):
+    name = models.CharField("Nome", max_length=100)
+    description = models.TextField("Descrição", blank=True, null=True)
+
+    class Meta:
+        db_table = "categorias"
+
+    def __str__(self):
+        return self.name
+
 
 class Ticket(models.Model):
     client = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name="tickets", null=True, blank=True)
@@ -137,6 +147,7 @@ class Ticket(models.Model):
     created_at = models.DateTimeField("Criado em", auto_now_add=True)
     updated_at = models.DateTimeField("Atualizado em", auto_now=True)
     due_date = models.DateTimeField("Previsão", null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         db_table = "tickets"
