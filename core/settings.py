@@ -13,6 +13,7 @@ ALLOWED_HOSTS = ['*']
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -43,9 +44,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'move_on', 'templates', 'Menu'),  # Para templates do Menu
-            os.path.join(BASE_DIR, 'move_on', 'templates', 'Tickets'),  # Para templates de Tickets
-            os.path.join(BASE_DIR, 'accounts', 'templates'),  # Para templates de Tickets
+            os.path.join(BASE_DIR, 'move_on', 'templates', 'Menu'), 
+            os.path.join(BASE_DIR, 'move_on', 'templates', 'Tickets'), 
+            os.path.join(BASE_DIR, 'accounts', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -108,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CSRF_TRUSTED_ORIGINS = ['https://example.com', 'http://localhost:8000']  # Altere conforme o seu ambiente
+CSRF_TRUSTED_ORIGINS = ['https://example.com', 'http://localhost:8000'] 
 
 
 

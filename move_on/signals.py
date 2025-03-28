@@ -23,13 +23,13 @@ def send_alert(sender, instance, **kwargs):
 
 
 @receiver(post_migrate)
-def load_default_data(sender, **kwargs):
+def load_default_data(sender, using, **kwargs):  # <-- Recebe o `using`
     print(f"Rodando post_migrate para: {sender.name}")
     if sender.name != "move_on":
         return  
 
-    if not SLA.objects.exists():
-        SLA.objects.bulk_create([
+    if not SLA.objects.using(using).exists():  # <-- Usa o banco correto
+        SLA.objects.using(using).bulk_create([
             SLA(priority=SLAPriority.LOW, response_time=4, resolution_time=10),
             SLA(priority=SLAPriority.MEDIUM, response_time=2, resolution_time=5),
             SLA(priority=SLAPriority.HIGH, response_time=2, resolution_time=2),
@@ -37,48 +37,40 @@ def load_default_data(sender, **kwargs):
         ])
         print("Criados os SLAs")
 
-    if not Role.objects.exists():
-        Role.objects.bulk_create([
+    if not Role.objects.using(using).exists():
+        Role.objects.using(using).bulk_create([
             Role(name='Admin', description='Administrador do sistema'),
             Role(name='Analista', description='Analista de Chamados'),
             Role(name='Técnico', description='Responsável pela resolução de chamados'),
             Role(name='Desenvolvedor', description='Desenvolvedor'),
         ])
-        print("Criados os Roles para usuarios padrão")
+        print("Criados os Roles para usuários padrão")
 
-    if not TicketStatus.objects.exists():
-        TicketStatus.objects.bulk_create([
-            TicketStatus(name='Aberto', color='blue'),
-            TicketStatus(name='Em Análise', color='yellow'),
-            TicketStatus(name='Em Andamento', color='orange'),
-            TicketStatus(name='Resolvido', color='green'),
-            TicketStatus(name='Fechado', color='gray'),
+    if not TicketStatus.objects.using(using).exists():
+        TicketStatus.objects.using(using).bulk_create([
+            TicketStatus(name='Aberto'),
+            TicketStatus(name='Em Análise'),
+            TicketStatus(name='Em Andamento'),
+            TicketStatus(name='Resolvido'),
+            TicketStatus(name='Fechado'),
         ])
         print("Criados os Status dos Tkts")
 
-    if not Team.objects.exists():
-        Team.objects.create(name="Admins"),
-        Team.objects.create(name="Desenvolvedores"),
-        Team.objects.create(name="Clientes"),
-        Team.objects.create(name="Técnicos"),
+    if not Team.objects.using(using).exists():
+        Team.objects.using(using).bulk_create([
+            Team(name="Admins"),
+            Team(name="Desenvolvedores"),
+            Team(name="Clientes"),
+            Team(name="Técnicos"),
+        ])
         print("Criados os Times")
-    
-    if not Category.objects.exists():
-        Category.objects.create(name="Chat"),
-        Category.objects.create(name="Corretivas"),
-        Category.objects.create(name="Atendimentos normais"),
-        Category.objects.create(name="Atendimentos Emergenciais"),
-        Category.objects.create(name="Melhorias"),
+
+    if not Category.objects.using(using).exists():
+        Category.objects.using(using).bulk_create([
+            Category(name="Chat"),
+            Category(name="Corretivas"),
+            Category(name="Atendimentos normais"),
+            Category(name="Atendimentos Emergenciais"),
+            Category(name="Melhorias"),
+        ])
         print("Criadas as Categorias")
-
-
-class Migration(migrations.Migration):
-
-    dependencies = [
-        
-    ]
-
-    operations = [
-        migrations.RunPython(load_default_data),
-
-    ]
