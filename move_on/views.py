@@ -81,7 +81,9 @@ class TicketDelete(LoginRequiredMixin, DeleteView):
         return response
 
 
-    
+
+class ParamsView(LoginRequiredMixin,TemplateView):
+    template_name = 'Param/params.html'
 
 class SLACreateView(LoginRequiredMixin, CreateView):
     model = SLA

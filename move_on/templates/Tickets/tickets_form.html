@@ -4,10 +4,8 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/stylesform.css' %}" />
 <div class="container">
-
-  <div class="card-tkt " id="tkt">
-
-    <h2 style="text-align: center; margin-top: 25px; font-size: 20px; ">
+  <div class="card-tkt" id="tkt">
+    <h2 style="text-align: center; margin-top: 25px; font-size: 20px">
       {% if form.instance.pk %}Editar Ticket{% else %}Criar Novo Ticket{% endif %}
       <i class="fa-brands fa-teamspeak"></i>
     </h2>
@@ -28,8 +26,7 @@
         <div class="col-4">
           <div class="form-group">
             <label for="status">Status Tkt:</label>
-            {{ form.status }}
-            {% if form.status.errors %}
+            {{ form.status }} {% if form.status.errors %}
             <div class="text-danger">
               {% for error in form.status.errors %}
               <p>{{ error }}</p>
@@ -60,7 +57,6 @@
           {% endif %}
         </div>
 
-
         <div class="col-6">
           <div class="form-group">
             <label for="title">Título:</label>
@@ -79,6 +75,16 @@
         {{ form.client }} {% if form.client.errors %}
         <div class="text-danger">
           {% for error in form.client.errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        <label for="category">Categoria</label>
+        {{ form.category }} {% if form.category.errors %}
+        <div class="text-danger">
+          {% for error in form.category.errors %}
           <p>{{ error }}</p>
           {% endfor %}
         </div>
@@ -107,15 +113,13 @@
         {% endif %}
       </div>
 
-
       <<!-- Botões -->
-        {% if form.instance.pk %}
-        <button type="submit" class="btn btn-primary">Editar Tkt</button>
-        {% else %}
-        <button type="submit" class="btn btn-primary">Criar Tkt</button>
-        {% endif %}
-        <a href="{% url 'ticket_list' %}" class="btn btn-secondary">Cancelar</a>
-
+      {% if form.instance.pk %}
+      <button type="submit" class="btn btn-primary">Editar Tkt</button>
+      {% else %}
+      <button type="submit" class="btn btn-primary">Criar Tkt</button>
+      {% endif %}
+      <a href="{% url 'ticket_list' %}" class="btn btn-secondary">Cancelar</a>
     </form>
   </div>
 </div>

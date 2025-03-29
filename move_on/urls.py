@@ -1,8 +1,11 @@
 from django.urls import path
-from .views import MenuViewiew, TicketCreate, TicketDelete, TicketDetail, TicketListView, TicketUpdate, SlaList, SLACreateView
+from .views import (MenuViewiew, TicketCreate, TicketDelete,
+                    TicketDetail, TicketListView, TicketUpdate,
+                    SlaList, SLACreateView, ParamsView)
 
 urlpatterns = [
     path('menu', MenuViewiew.as_view(), name='index'), 
+    path('params', ParamsView.as_view(), name='params'), 
     path('tickets/list',TicketListView.as_view(), name="ticket_list"),
     path('tickets/detail/<int:pk>', TicketDetail.as_view(), name="ticket_detail"),
     path('tickets/create', TicketCreate.as_view(), name="ticket_form"),

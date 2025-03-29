@@ -75,16 +75,16 @@ h3 {
 /*icones*/
 
 .fa-home {
-  color: rgb(196, 139, 139);
+  color: blanchedalmond;
 }
 .fa-tasks {
-  color: aliceblue;
+  color: blanchedalmond;
 }
 .fa-users {
-  color: rgb(171, 228, 209);
+  color: blanchedalmond;
 }
 .fa-cogs {
-  color: rgb(248, 207, 96);
+  color: blanchedalmond;
 }
 
 /* Botão flutuante (ícone de suporte) */
@@ -117,13 +117,13 @@ h3 {
 .table {
   width: 92%;
   border-collapse: collapse;
-  background-color: #1e1e1e; /* Fundo escuro */
+  background-color: #1e3a4b; /* Fundo escuro */
   border-radius: 8px;
   overflow: hidden;
 }
 
 .table th {
-  background-color: #333;
+  background-color: #1e3a4b;
   color: aliceblue;
   padding: 10px;
   text-align: left;
@@ -137,7 +137,7 @@ h3 {
 }
 
 .table tbody tr:nth-child(even) {
-  background-color: #2a2a2a;
+  background-color: #1e3a4b;
 }
 
 .table tbody tr:hover {

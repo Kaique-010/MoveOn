@@ -29,7 +29,7 @@
     <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Clientes">
       <i class="fas fa-users"></i> <span>Clientes</span>
     </a>
-    <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Configurações">
+    <a href="{% url 'params' %}" data-bs-toggle="tooltip" data-bs-placement="right" title="Configurações">
       <i class="fas fa-cogs"></i> <span>Configurações</span>
     </a>
     <form method="POST" action="{% url 'logout' %}">
@@ -46,7 +46,7 @@
     <h3>
       {% block title %}Bem-vindo, {{ user.username }} ao MoveON!{% endblock %}
     </h3>
-    < <p>{% block content %}{% endblock %}</p>
+    <p>{% block content %}{% endblock %}</p>
   </div>
 
   <!-- Botão flutuante de suporte -->

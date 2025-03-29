@@ -1,0 +1,69 @@
+/* Container principal */
+.container {
+  max-width: 90%;
+}
+
+/* Título */
+h2 {
+  color: antiquewhite;
+  font-weight: bold;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #fffbe7;
+  display: inline-block;
+  padding-bottom: 5px;
+  font-size: 20px;
+}
+
+/* Estilização dos cards */
+.card {
+  border-radius: 12px;
+  border: none;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  background: #1e1e1e;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  
+}
+
+/* Título dos cards */
+.card-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: aliceblue;
+}
+
+/* Ícones */
+.card-title i {
+  color: blanchedalmond;
+  margin-right: 8px;
+}
+
+/* Lista dentro dos cards */
+.card-body ul {
+  padding-left: 0;
+}
+
+.card-body li {
+  list-style: none;
+  margin-bottom: 8px;
+}
+
+.card-body a {
+  text-decoration: none;
+  color: aliceblue;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.card-body a:hover {
+  color: blanchedalmond;
+  text-decoration: underline;
+}
+
+.text-primary {
+  color: rgb(222, 252, 242) !important;
+}
