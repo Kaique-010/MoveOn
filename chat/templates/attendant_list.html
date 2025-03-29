@@ -1,0 +1,55 @@
+<!-- attendant_list.html -->
+
+{% extends 'Menu/menu.html' %} 
+
+{% block content %}
+<h5 style="color: antiquewhite; margin-bottom: 20px;">Lista de Atendentes</h5>
+
+<!-- Botão alinhado ao final -->
+
+<div class="d-flex justify-content-end mb-4" style="margin-right: 130px;">
+  <a href="{% url 'attendant_create' %}" class="btn btn-primary">
+    <i class="fa fa-plus"></i> Adicionar Atendente
+  </a>
+</div>
+
+
+<div class="container">
+  <div class="table-responsive">
+    <table class="table table-sm table-striped" id="ticketTable">
+      <thead class="text-center">
+        <tr>
+          <th>Atendente</th>
+          <th>Equipe</th>
+          <th>Disponibilidade</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for attendant in attendants %}
+        <tr>
+          <td>{{ attendant.user.username }}</td>
+          <td>{{ attendant.team.name }}</td>
+          <td>
+            {% if attendant.available %}
+              Disponível
+            {% else %}
+              Ocupado
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'attendant_update' attendant.pk %}">Editar Disponibilidade</a>
+            |
+            <a href="{% url 'attendant_delete' attendant.pk %}">Excluir</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4">Nenhum atendente encontrado.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

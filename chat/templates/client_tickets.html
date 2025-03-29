@@ -1,0 +1,18 @@
+{% extends "Menu/menu.html" %} {% block content %}
+<style>
+  * {
+    color: aliceblue;
+  }
+</style>
+<h2>Seus Tickets</h2>
+<ul>
+  {% for ticket in tickets %}
+  <li>
+    <strong>{{ ticket.title }}</strong> -
+    <a href="">Abrir Chat</a>
+  </li>
+  {% empty %}
+  <li>Você não tem tickets abertos.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

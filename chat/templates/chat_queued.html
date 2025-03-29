@@ -1,0 +1,18 @@
+{% extends "Menu/menu.html" %} {% block content %}
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fila de Espera</title>
+  </head>
+  <body>
+    <h1 style="color: antiquewhite">
+      Estamos aguardando um atendente disponível para você.
+    </h1>
+    <p style="color: aliceblue">
+      Seu ticket <strong>#{{ ticket_id }}</strong> está na fila de espera. Por
+      favor, aguarde enquanto tentamos conectar você a um atendente.
+    </p>
+  </body>
+</html>
+{% endblock %}

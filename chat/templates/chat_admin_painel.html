@@ -1,0 +1,152 @@
+{% extends "Menu/menu.html" %} {% load custom_filter %} {% block content %}
+<style>
+  .container {
+    margin-top: 20px;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+  }
+
+  .card h3 {
+    font-size: 20px;
+    color: #2c3e50;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .col-4 {
+    flex: 1;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    padding: 5px 0;
+    font-size: 16px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  th,
+  td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #2c3e50;
+    color: white;
+  }
+
+  td {
+    background-color: #f9f9f9;
+  }
+
+  .update-btn {
+    background-color: #2d4352;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+
+  .update-btn:hover {
+    background-color: #2980b9;
+  }
+</style>
+
+<div class="container">
+  <h2>Painel do Chat - Administrador</h2>
+
+  <div class="row">
+    <div class="col-4">
+      <div class="card">
+        <h3>🟢 Atendentes Online</h3>
+        <ul>
+          {% for attendant in online_attendants %}
+          <li>{{ attendant.username }}</li>
+          {% empty %}
+          <li>Nenhum atendente online.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-4">
+      <div class="card">
+        <h3>🔴 Atendentes Offline</h3>
+        <ul>
+          {% for attendant in offline_attendants %}
+          <li>{{ attendant.username }}</li>
+          {% empty %}
+          <li>Todos os atendentes estão online.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Resumo dos Atendimentos</h3>
+    <table>
+      <tr>
+        <th>Atendente</th>
+        <th>Atendimentos Feitos</th>
+        <th>Clientes Atendidos</th>
+      </tr>
+      {% for attendant in attendants_data %}
+      <tr>
+        <td>{{ attendant.username }}</td>
+        <td>{{ attendant.total_tickets }}</td>
+        <td>
+          {% for client in attendant_clients|get_item:attendant.id %} {{ client
+          }}{% if not forloop.last %}, {% endif %} {% empty %} Nenhum cliente
+          atendido. {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <button class="update-btn" onclick="updatePanel()">Atualizar Painel</button>
+</div>
+
+<script>
+  function updatePanel() {
+    fetch("{% url 'chat_admin_panel' %}")
+      .then((response) => response.text())
+      .then((html) => {
+        document.body.innerHTML = html;
+      });
+  }
+
+  setInterval(updatePanel, 10000); // Atualiza a cada 10 segundos
+</script>
+
+{% endblock %}

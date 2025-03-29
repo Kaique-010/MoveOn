@@ -1,0 +1,15 @@
+{% extends "Menu/menu.html" %} {% block content %}
+<h2>Configurações de Atendimento do Chat</h2>
+<style>
+  h2 {
+    color: antiquewhite;
+  }
+  form {
+    color: aliceblue;
+  }
+</style>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Salvar</button>
+</form>
+{% endblock %}

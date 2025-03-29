@@ -32,6 +32,9 @@
     <a href="{% url 'params' %}" data-bs-toggle="tooltip" data-bs-placement="right" title="Configurações">
       <i class="fas fa-cogs"></i> <span>Configurações</span>
     </a>
+    <a href="{% url 'chat_admin_panel' %}" data-bs-toggle="tooltip" data-bs-placement="right" title="Painel">
+      <i class="fa-solid fa-comment-dots"></i><span>Painel ADM</span>
+    </a>
     <form method="POST" action="{% url 'logout' %}">
       {% csrf_token %}
       <button type="submit" class="btn btn-danger-2 w-100">Logout</button>

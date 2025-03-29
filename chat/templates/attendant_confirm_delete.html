@@ -1,0 +1,13 @@
+<!-- attendant_confirm_delete.html -->
+
+{% extends 'Menu/menu.html' %} {% block content %}
+<h2>Confirmar Exclusão</h2>
+<p>
+  Tem certeza de que deseja excluir o atendente "{{ attendant.user.username }}"?
+</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Sim, excluir</button>
+  <a href="{% url 'attendant_list' %}">Cancelar</a>
+</form>
+{% endblock %}
