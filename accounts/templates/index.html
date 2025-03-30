@@ -165,9 +165,12 @@
         <i class="bi bi-tools"></i> Tickets por Categorias
       </h6>
       <ul class="roles-list">
-        {% for category, count in categories_tkts.items %}
-        <li><strong>{{ category|title }}:</strong> {{ count }} Tickets</li>
+        {% for categoria in categories %}
+        <li>
+          <strong>{{ categoria|title }}:</strong> {{ categoria.ticket_count }}
+        </li>
         {% endfor %}
+        <li>Sem Categoria: {{ uncategorized_tickets }}</li>
       </ul>
     </div>
 
@@ -176,9 +179,13 @@
         <i class="bi bi-tools"></i> Tickets por Usuário
       </h6>
       <ul class="roles-list">
-        {% for user, count in users_tkts.items %}
-        <li><strong>{{ user|title }}:</strong> {{ count }} Tickets</li>
+        {% for usuario in usuarios %}
+        <li>
+          <strong>{{ usuario.username }}:</strong> {{ usuario.ticket_count }}
+          Tickets
+        </li>
         {% endfor %}
+        <li>Sem Usuários: {{ unknow_user }}</li>
       </ul>
     </div>
   </div>

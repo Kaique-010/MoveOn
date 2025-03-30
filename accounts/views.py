@@ -4,8 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, JsonResponse
 from django.views.generic import TemplateView
-
-from move_on.models import Ticket
+from move_on.models import Ticket, Category, User
 
 def custom_login(request):
     if request.method == 'POST':
@@ -39,13 +38,18 @@ class IndexView(LoginRequiredMixin, TemplateView):
         today = localdate()  # Data de hoje
         week_start = today - timedelta(days=today.weekday())  # Início da semana (segunda-feira)
         month_start = today.replace(day=1)  # Início do mês
+        categories = Category.objects.annotate(ticket_count=Count("ticket"))
+        uncategorized_tickets = Ticket.objects.filter(category__isnull=True).count()
+        usuarios = User.objects.annotate(ticket_count= Count("created_tickets"))
+        unknow_user = Ticket.objects.filter(created_by__isnull=True).count()
         
         # Definindo os papéis (roles) para simplificação
         roles = {
             'admins': 1, 
             'devs': 2,
             'tec': 4,
-            'analista': 5
+            'analista': 5, 
+            'vazio': None
         }
         
         # Contagem de tickets por role
@@ -58,7 +62,15 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context['tickets_week'] = Ticket.objects.filter(created_by=user, created_at__date__gte=week_start).count()
         context['tickets_month'] = Ticket.objects.filter(created_by=user, created_at__date__gte=month_start).count()
         
-        # Passando o dicionário com a contagem de tickets por role
-        context['roles_tkts'] = roles_tkts
+        context.update({
+            'tickets_today': Ticket.objects.filter(created_by=user, created_at__date=today).count(),
+            'tickets_week': Ticket.objects.filter(created_by=user, created_at__date__gte=week_start).count(),
+            'tickets_month': Ticket.objects.filter(created_by=user, created_at__date__gte=month_start).count(),
+            'roles_tkts': roles_tkts,
+            'categories': categories,
+            'uncategorized_tickets': uncategorized_tickets,  # Tickets sem categoria
+            'unknow_user':unknow_user,
+            'usuarios': usuarios
+        })
 
         return context

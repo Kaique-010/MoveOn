@@ -1,5 +1,5 @@
 from django import forms
-from .models import Ticket, TicketAlert, SLA
+from .models import Category, Ticket, TicketAlert, SLA
 
 class TicketForm(forms.ModelForm):
     class Meta:
@@ -43,3 +43,12 @@ class SLAForm(forms.ModelForm):
         if resolution_time and response_time and resolution_time < response_time:
             raise forms.ValidationError("O tempo de resolução não pode ser menor que o tempo de resposta.")
         return cleaned_data
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model= Category
+        fields='__all__'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 6, 'placeholder': 'Descrição'}),
+        }

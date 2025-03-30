@@ -6,8 +6,8 @@ from django.views.generic import TemplateView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.urls import reverse_lazy
-from .models import SLA, Ticket, TicketAlert, TicketStatus
-from .forms import SLAForm, TicketForm
+from .models import SLA, Category, Ticket, TicketAlert, TicketStatus
+from .forms import CategoryForm, SLAForm, TicketForm
 from django.db.models import Q
 
 class MenuViewiew(LoginRequiredMixin,TemplateView):
@@ -108,3 +108,32 @@ class SlaList(LoginRequiredMixin, ListView):
         if user.is_superuser:
             return SLA.objects.all()
         
+class CategoryList(LoginRequiredMixin, ListView):
+    model=Category
+    template_name= 'Category/categories_list.html'
+    context_object_name = 'categories'
+
+class CategoryCreate(LoginRequiredMixin, CreateView):
+    model=Category
+    template_name= 'Category/category_form.html'
+    form_class = CategoryForm
+    success_url = reverse_lazy('categories_list')
+    
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+class CategoriesUpdate(LoginRequiredMixin, UpdateView):
+    model=Category
+    form_class = CategoryForm
+    template_name= 'Category/category_form.html'
+    success_url = reverse_lazy('categories_list')
+    
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+class CategoriesDelete(LoginRequiredMixin, DeleteView):
+    model=Category
+    template_name= 'Category/category_delete.html'
+    success_url = reverse_lazy('categories_list')
+    
+    
