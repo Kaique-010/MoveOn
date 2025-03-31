@@ -136,4 +136,4 @@ class CategoriesDelete(LoginRequiredMixin, DeleteView):
     template_name= 'Category/category_delete.html'
     success_url = reverse_lazy('categories_list')
     
-    
+

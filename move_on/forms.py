@@ -1,5 +1,6 @@
+from attr import fields
 from django import forms
-from .models import Category, Ticket, TicketAlert, SLA
+from .models import Category, Ticket, TicketAlert, SLA, Profile
 
 class TicketForm(forms.ModelForm):
     class Meta:
@@ -51,4 +52,20 @@ class CategoryForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 6, 'placeholder': 'Descrição'}),
+        }
+
+class ProfileForms(forms.ModelForm):
+    document = forms.CharField(
+        max_length=18,  # Mantém o mesmo limite do modelo
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CPF/CNPJ'})
+    )
+
+    class Meta:
+        model = Profile
+        fields = '__all__'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'E-mail'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone'}),
+            'active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
