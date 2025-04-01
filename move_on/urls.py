@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (CategoriesDelete, CategoriesUpdate, CategoryCreate, CategoryList, MenuViewiew, TicketCreate, TicketDelete,
+from .views import (CategoriesDelete, CategoriesUpdate, CategoryCreate, CategoryList, MenuViewiew, SlaDeleteView, SlaUpdateView, TicketCreate, TicketDelete,
                     TicketDetail, TicketListView, TicketUpdate,
                     SlaList, SLACreateView, ParamsView)
 from .views_profile import (ProfileDeleteView, ProfileListView, ProfileCreateView, ProfileUpdateView
@@ -14,8 +14,11 @@ urlpatterns = [
     path('tickets/create', TicketCreate.as_view(), name="ticket_form"),
     path('tickets/update/<int:pk>', TicketUpdate.as_view(), name="ticket_update"),
     path('tickets/delete/<int:pk>', TicketDelete.as_view(), name="ticket_delete"),
-    path('tickets/slalist', SlaList.as_view(), name="sla_list"),
-    path('tickets/slacreate', SLACreateView.as_view(), name="sla_create"),
+    
+    path('SLA/list', SlaList.as_view(), name="sla_list"),
+    path('SLA/create', SLACreateView.as_view(), name="sla_form"),
+    path('SLA/update/<int:pk>', SlaUpdateView.as_view(), name="sla_update"),
+    path('SLA/delete/<int:pk>', SlaDeleteView.as_view(), name="sla_delete"),
     
     path('Category/list', CategoryList.as_view(), name='categories_list'),
     path('Category/create/', CategoryCreate.as_view(), name='category_form'),

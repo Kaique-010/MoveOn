@@ -1,0 +1,21 @@
+{% extends "Menu/menu.html" %} {% block content %}
+<h4 style="margin: 25px; text-align: center">
+  <i class="fas fa-trash-alt"></i> Excluir SLA
+</h4>
+
+<div class="alert alert-warning" role="alert">
+  <strong>Você tem certeza que deseja excluir este SLA?</strong>
+  <br />
+  <strong>SLA Prioridade: </strong>{{ sla.priority }}
+  <br />
+  <strong>Tempo de Resposta: </strong>{{ sla.response_time }}
+  <br />
+</div>
+<form method="POST" action="{% url 'sla_delete' sla.id %}">
+  {% csrf_token %}
+  <input type="hidden" name="_method" value="DELETE" />
+  <button type="submit" class="btn btn-danger">Sim, excluir</button>
+  <a href="{% url 'sla_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+{% endblock %}

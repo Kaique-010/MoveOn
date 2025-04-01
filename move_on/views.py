@@ -88,7 +88,7 @@ class ParamsView(LoginRequiredMixin,TemplateView):
 class SLACreateView(LoginRequiredMixin, CreateView):
     model = SLA
     form_class = SLAForm
-    template_name = 'tickets/sla_create.html'
+    template_name = 'SLA/sla_form.html'
     success_url = reverse_lazy('sla_list') 
 
     def form_valid(self, form):
@@ -98,8 +98,8 @@ class SLACreateView(LoginRequiredMixin, CreateView):
 
 class SlaList(LoginRequiredMixin, ListView):
     model = SLA
-    template_name = 'tickets/sla_list.html'
-    context_object_name = 'sla'
+    template_name = 'SLA/sla_list.html'
+    context_object_name = 'slas'
     
     def get_queryset(self):
         
@@ -107,7 +107,25 @@ class SlaList(LoginRequiredMixin, ListView):
         
         if user.is_superuser:
             return SLA.objects.all()
-        
+
+class SlaUpdateView(LoginRequiredMixin, UpdateView):
+    model = SLA
+    template_name = 'SLA/sla_form.html'
+    form_class = SLAForm
+    context_object_name = 'slas'
+    success_url = reverse_lazy('sla_list')
+    
+    def get_queryset(self):
+        return super().get_queryset()
+    
+    
+    
+class SlaDeleteView(LoginRequiredMixin, DeleteView):
+    model = SLA
+    template_name = 'SLA/sla_delete.html'
+    success_url = reverse_lazy('sla_list')
+    
+    
 class CategoryList(LoginRequiredMixin, ListView):
     model=Category
     template_name= 'Category/categories_list.html'

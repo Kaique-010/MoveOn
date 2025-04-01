@@ -1,0 +1,77 @@
+{% extends "Menu/menu.html" %} {% block content %}
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+/>
+
+<h4 style="margin: 25px; text-align: center">
+  <i class="bi bi-chat-square-text fs-2"></i> SLA's
+</h4>
+
+<a href="{% url 'sla_form' %}" class="btn btn-success" style="margin: 10px">
+  <i class="bi bi-plus"></i>
+  Novo sla
+</a>
+
+<div class="table-responsive">
+  <table class="table table-sm table-striped" id="ticketTable">
+    <thead class="text-center">
+      <tr>
+        <th>Ações</th>
+        <th>Priridade</th>
+        <th>Tempo de resposta</th>
+        <th>Tempo de Resolução</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sla in slas %}
+      <tr>
+        <td>
+          <a href="{% url 'sla_update' sla.id %}">
+            <i
+              class="fas fa-edit"
+              aria-placeholder="Editar"
+              tooltip="Editar"
+            ></i>
+          </a>
+          <a class="text-danger" href="{% url 'sla_delete' sla.id %}">
+            <i
+              class="fas fa-trash-alt"
+              aria-placeholder="Deletar"
+              tooltip="Deletar"
+            ></i>
+          </a>
+        </td>
+        <td>{{ sla.priority }}</td>
+        <td>{{ sla.response_time }} Dias</td>
+        <td>{{ sla.resolution_time }} Dias</td>
+
+        {% empty %}
+      </tr>
+
+      <tr>
+        <td colspan="9" class="text-center">Nenhuma Categoria encontrada.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof jQuery === "undefined") {
+      console.error("jQuery não carregou!");
+    } else {
+      console.log("jQuery carregado com sucesso!");
+      var jq = $.noConflict();
+
+      // Tornar as colunas redimensionáveis
+      jq("#ticketTable th").resizable({
+        handles: "e",
+        minWidth: 50,
+      });
+    }
+  });
+</script>
+
+{% endblock %}
