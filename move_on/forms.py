@@ -1,5 +1,8 @@
+from tkinter import Widget
+from attr import field
 from django import forms
-from .models import Category, Ticket, TicketAlert, SLA, Profile
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import Category, Team, Ticket, TicketAlert, SLA, Profile, TicketStatus, User
 
 class TicketForm(forms.ModelForm):
     class Meta:
@@ -67,4 +70,56 @@ class ProfileForms(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'E-mail'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone'}),
             'active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+class TicketStatusForm(forms.ModelForm):
+    
+    class Meta:
+        model= TicketStatus
+        fields= '__all__'
+        wigdets= {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
+        }
+
+class TeamForm(forms.ModelForm):
+    
+    class Meta:
+        model=Team
+        fields= '__all__'
+        Widgets= {
+            'client':forms.Select(attrs={'class': 'form-control', 'placeholder': 'cliente'}),
+            'name':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
+            'roles':forms.Select(attrs={'class': 'form-control', 'placeholder': 'permissões'}),
+            'members':forms.Select(attrs={'class': 'form-control', 'placeholder': 'membros'}),
+            
+        }
+    
+    
+
+# Formulário para criação de usuário
+class UserForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2', 'client', 'role', 'is_active']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome de usuário'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'client': forms.Select(attrs={'class': 'form-control'}),
+            'role': forms.Select(attrs={'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+# 🔹 Formulário para atualização de usuário
+class UserUpdateForm(UserChangeForm):
+    password = None  # Esconde o campo de senha na edição
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'client', 'role', 'is_active']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome de usuário'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'client': forms.Select(attrs={'class': 'form-control'}),
+            'role': forms.Select(attrs={'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

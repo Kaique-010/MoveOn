@@ -18,7 +18,7 @@
     <thead class="text-center">
       <tr>
         <th>Ações</th>
-        <th>Priridade</th>
+        <th>Prioridade</th>
         <th>Tempo de resposta</th>
         <th>Tempo de Resolução</th>
       </tr>
@@ -56,19 +56,25 @@
     </tbody>
   </table>
 </div>
+<!-- Importando jQuery e jQuery UI -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
+<!-- Script para tornar as colunas redimensionáveis -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     if (typeof jQuery === "undefined") {
       console.error("jQuery não carregou!");
     } else {
       console.log("jQuery carregado com sucesso!");
-      var jq = $.noConflict();
-
-      // Tornar as colunas redimensionáveis
-      jq("#ticketTable th").resizable({
-        handles: "e",
-        minWidth: 50,
+      
+      // Aplicando jQuery UI para tornar as colunas ajustáveis
+      $("#ticketTable th").each(function () {
+        $(this).resizable({
+          handles: "e",
+          minWidth: 50
+        });
       });
     }
   });

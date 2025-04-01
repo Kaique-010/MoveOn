@@ -6,8 +6,8 @@ from django.views.generic import TemplateView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.urls import reverse_lazy
-from .models import SLA, Category, Ticket, TicketAlert, TicketStatus
-from .forms import CategoryForm, SLAForm, TicketForm
+from .models import SLA, Category, Team, Ticket, TicketAlert, TicketStatus, User
+from .forms import CategoryForm, SLAForm, TeamForm, TicketAlertForm, TicketForm, TicketStatusForm, UserForm, UserUpdateForm
 from django.db.models import Q
 
 class MenuViewiew(LoginRequiredMixin,TemplateView):
@@ -18,16 +18,16 @@ class TicketListView(LoginRequiredMixin,ListView):
     template_name = 'tickets/ticket_list.html'
     context_object_name = 'tickets'
     
-def get_queryset(self):
-        
-        user= self.request.user
-        
-        if user.is_superuser:
-            return Ticket.objects.all()
-        return Ticket.objects.filter(
-            Q(client=user.client) &
-            (Q(createted_by=user)) | Q(assigned_by=user) | Q(client=user.client)
-        )
+    def get_queryset(self):
+            
+            user= self.request.user
+            
+            if user.is_superuser:
+                return Ticket.objects.all()
+            return Ticket.objects.filter(
+                Q(client=user.client) &
+                (Q(createted_by=user)) | Q(assigned_by=user) | Q(client=user.client)
+            )
 
 
 class TicketDetail(LoginRequiredMixin, DetailView):
@@ -155,3 +155,95 @@ class CategoriesDelete(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('categories_list')
     
 
+class StatusTicketListView(LoginRequiredMixin, ListView):
+    model=TicketStatus
+    template_name = 'Status/status_list.html'
+    context_object_name = 'status'
+
+class StatusTicketCreateView(LoginRequiredMixin, CreateView):
+    model=TicketStatus
+    template_name= 'Status/status_form.html'
+    form_class= TicketStatusForm
+    success_url = reverse_lazy('status_list')
+    
+    def form_invalid(self, form):
+        return super().form_invalid(form)
+
+class StatusTicketUpdateView(LoginRequiredMixin, UpdateView):
+    model=TicketStatus
+    template_name='Status/status_form.html'
+    form_class=TicketStatusForm
+    success_url= reverse_lazy('status_list')
+    
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+class StatusTicketDeleteView(LoginRequiredMixin, DeleteView):
+    model=TicketStatus
+    template_name= 'Status/status_delete.html'
+    success_url= reverse_lazy('status_list')
+    
+    def get_object(self, queryset=None):
+        print("PK recebido:", self.kwargs.get("pk")) 
+        return super().get_object(queryset)
+
+
+
+   
+class TeamList(LoginRequiredMixin, ListView):
+    model=Team
+    template_name= 'Team/team_list.html'
+    context_object_name = 'teams'
+    
+    def get_queryset(self):
+        return Team.objects.prefetch_related('roles', 'members').all()
+
+class TeamCreateView(LoginRequiredMixin, CreateView):
+    model=Team
+    template_name= 'Team/team_form.html'
+    form_class = TeamForm
+    success_url = reverse_lazy('team_list')
+    
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+class TeamUpdateView(LoginRequiredMixin, UpdateView):
+    model=Team
+    form_class = TeamForm
+    template_name= 'Team/team_form.html'
+    success_url = reverse_lazy('team_list')
+    
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+class TeamDeleteView(LoginRequiredMixin, DeleteView):
+    model=Team
+    template_name= 'Team/team_delete.html'
+    success_url = reverse_lazy('team_list')
+    
+
+# 🔹 Listar usuários
+class UserListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = "User/user_list.html"
+    context_object_name = "users"
+
+# 🔹 Criar usuário
+class UserCreateView(LoginRequiredMixin, CreateView):
+    model = User
+    form_class = UserForm
+    template_name = "User/user_form.html"
+    success_url = reverse_lazy("user_list")
+
+# 🔹 Atualizar usuário
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    template_name = "User/user_form.html"
+    success_url = reverse_lazy("user_list")
+
+# 🔹 Deletar usuário
+class UserDeleteView(LoginRequiredMixin, DeleteView):
+    model = User
+    template_name = "User/user_delete.html"
+    success_url = reverse_lazy("user_list")

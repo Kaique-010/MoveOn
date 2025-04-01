@@ -22,13 +22,13 @@ body {
 
 h4,
 h6 {
-  color: aliceblue;
+  color: antiquewhite;
   font-weight: bolder;
   font-size: 15px;
 }
 
 h3 {
-  color: aliceblue;
+  color: antiquewhite;
   font-size: 18px;
 }
 /* Expansão da sidebar ao passar o mouse */
@@ -67,7 +67,7 @@ h3 {
 
 /* Conteúdo principal */
 .content {
-  margin-left: 170px;
+  margin-left: 160px;
   padding: 50px;
   margin-top: 5px;
 }
@@ -163,9 +163,36 @@ h3 {
 .btn-danger-2 {
   background-color: #dc3545;
   color: white;
-  margin-top: 500px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-top: 50vh; /* Ajusta dinamicamente conforme a altura da tela */
 }
 
 .btn:hover {
   opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .btn-danger-2 {
+    margin-top: 40vh;
+    font-size: 10px;
+    padding: 8px 16px;
+  }
+
+  .content {
+    margin-left: 80px;
+    padding: 100px;
+    margin-top: 5px;
+  }
+  .hide-on-small {
+    display: none;
+  }
+}
+
+@media (min-width: 820px) {
+  .btn-danger-2 {
+    margin-top: 67vh;
+    font-size: 14px;
+    padding: 6px 10px;
+  }
 }

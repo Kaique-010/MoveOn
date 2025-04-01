@@ -15,7 +15,7 @@
     padding: 20px;
   }
 
-  /* Grid para alinhar os cards corretamente */
+
   .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -67,15 +67,18 @@
 
   /* Cores dos cards de cima */
   .ticket-card.hoje {
-    background: #f8d7da; /* Rosa pastel */
+    background: #f8d7da;
+    /* Rosa pastel */
   }
 
   .ticket-card.semana {
-    background: #fff3cd; /* Amarelo pastel */
+    background: #fff3cd;
+    /* Amarelo pastel */
   }
 
   .ticket-card.mes {
-    background: #d4edda; /* Verde pastel */
+    background: #d4edda;
+    /* Verde pastel */
   }
 
   /* Cards de listagem (Dark Theme) */
@@ -108,10 +111,42 @@
     margin-bottom: 8px;
   }
 
-  /* Responsividade */
+
   @media (max-width: 768px) {
     .container {
-      padding: 10px;
+      padding: 100px;
+
+    }
+
+    .dashboard-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .ticket-card {
+      font-size: 8px;
+      padding: 0;
+
+    }
+
+    .ticket-icon {
+      font-size: 18px;
+      width: 60px;
+    }
+
+    .ticket-count {
+      font-size: 10px;
+    }
+
+    .roles-card {
+      padding: auto;
+    }
+
+    .roles-card-title {
+      font-size: 12px;
+    }
+
+    .roles-list li {
+      font-size: 10px;
     }
   }
 </style>

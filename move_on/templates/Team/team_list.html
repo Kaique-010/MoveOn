@@ -1,0 +1,99 @@
+{% extends "Menu/menu.html" %} 
+{% block content %}
+
+<!-- Importação de ícones do Bootstrap -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+
+<!-- Título -->
+<h4 style="margin: 25px; text-align: center">
+  <i class="bi bi-bar-chart-steps"></i> Equipes
+</h4>
+
+<!-- Botão para adicionar nova equipe -->
+<a href="{% url 'team_form' %}" class="btn btn-success" style="margin: 10px">
+  <i class="bi bi-plus"></i> Nova Equipe
+</a>
+
+<!-- Tabela Responsiva -->
+<div class="table-responsive">
+  <table class="table table-sm table-striped" id="ticketTable">
+    <thead class="text-center">
+      <tr>
+        <th>Ações</th>
+        <th>Cliente</th>
+        <th>Nome</th>
+        <th>Funções</th>
+        <th>Membros</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for team in teams %}
+      <tr>
+        <!-- Ações -->
+        <td>
+          <a href="{% url 'team_update' team.id %}" title="Editar">
+            <i class="fas fa-edit"></i>
+          </a>
+          <a class="text-danger" href="{% url 'team_delete' team.id %}" title="Deletar">
+            <i class="fas fa-trash-alt"></i>
+          </a>
+        </td>
+        
+        <!-- Cliente -->
+        <td>{{ team.client }}</td>
+
+        <!-- Nome da Equipe -->
+        <td>{{ team.name }}</td>
+
+        <!-- Funções -->
+        <td>
+          {% for role in team.roles.all %}
+            {{ role.name }}{% if not forloop.last %}, {% endif %}
+          {% empty %}
+            Nenhuma função
+          {% endfor %}
+        </td>
+
+        <!-- Membros -->
+        <td>
+          {% for member in team.members.all %}
+            {{ member.username }}{% if not forloop.last %}, {% endif %}
+          {% empty %}
+            Nenhum membro
+          {% endfor %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="text-center">Nenhuma Equipe encontrada.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Importando jQuery e jQuery UI -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+
+<!-- Script para tornar as colunas redimensionáveis -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof jQuery === "undefined") {
+      console.error("jQuery não carregou!");
+    } else {
+      console.log("jQuery carregado com sucesso!");
+      
+      // Aplicando jQuery UI para tornar as colunas ajustáveis
+      $("#ticketTable th").each(function () {
+        $(this).resizable({
+          handles: "e",
+          minWidth: 50
+        });
+      });
+    }
+  });
+</script>
+
+{% endblock %}

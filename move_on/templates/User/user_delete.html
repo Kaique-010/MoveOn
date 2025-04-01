@@ -1,0 +1,15 @@
+{% extends "Menu/menu.html" %}
+{% block content %}
+
+<h4 style="text-align: center; margin: 20px;">Confirmar Exclusão</h4>
+
+<div class="container text-center">
+  <p style="color: antiquewhite;">Tem certeza que deseja excluir o usuário <strong>{{ object.username }}</strong>?</p>
+  
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Excluir</button>
+    <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{%endblock%}

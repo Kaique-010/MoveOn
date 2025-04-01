@@ -2,12 +2,12 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
 
 <h4 style="margin: 25px; text-align: center">
-  <i class="bi bi-person fs-2"></i> Profiles
+  <i class="bi bi-chat-square-text fs-2"></i> Status
 </h4>
 
-<a href="{% url 'profile_form' %}" class="btn btn-success" style="margin: 10px">
+<a href="{% url 'status_form' %}" class="btn btn-success" style="margin: 10px">
   <i class="bi bi-plus"></i>
-  Novo Profile
+  Novo status
 </a>
 
 <div class="table-responsive">
@@ -15,34 +15,29 @@
     <thead class="text-center">
       <tr>
         <th>Ações</th>
-        <th>Nome</th>
-        <th>Documento (CPF/CNPJ)</th>
-        <th>E-mail</th>
-        <th>Telefone</th>
-        <th>Ativo?</th>
+        <th>ID</th>
+        <th>Descrição</th>
       </tr>
     </thead>
     <tbody>
-      {% for profile in profiles %}
+      {% for status in status %}
       <tr>
         <td>
-          <a href="{% url 'profile_update' profile.id %}">
+          <a href="{% url 'status_update' status.pk %}">
             <i class="fas fa-edit" aria-placeholder="Editar" tooltip="Editar"></i>
           </a>
-          <a class="text-danger" href="{% url 'profile_delete' profile.id %}">
+          <a class="text-danger" href="{% url 'status_delete' status.pk %}">
             <i class="fas fa-trash-alt" aria-placeholder="Deletar" tooltip="Deletar"></i>
           </a>
         </td>
-        <td>{{ profile.name }}</td>
-        <td>{{ profile.document }}</td>
-        <td>{{ profile.email }}</td>
-        <td>{{ profile.phone }}</td>
-        <td>{%if profile.active%} Ativo {%else%} Inativo {%endif%}</td>
+        <td>{{ status.id }}</td>
+        <td>{{ status.name }}</td>
+
         {% empty %}
       </tr>
 
       <tr>
-        <td colspan="9" class="text-center">Nenhuma Categoria encontrada.</td>
+        <td colspan="3" class="text-center">Nenhuma Categoria encontrada.</td>
       </tr>
       {% endfor %}
     </tbody>

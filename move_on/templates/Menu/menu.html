@@ -18,7 +18,7 @@
 
 <body>
   <nav class="sidebar">
-    <h6>MoveOn</h6>
+    <h6> <img src="{% static 'image/moveon.png' %}" style="width: 100px; height:50px;"></h6>
     {% if user.is_authenticated %}
     <a href="/" data-bs-toggle="tooltip" data-bs-placement="right" title="Home">
       <i class="fas fa-home"></i> <span>Home</span>
@@ -26,7 +26,7 @@
     <a href="{% url 'ticket_list' %}" data-bs-toggle="tooltip" data-bs-placement="right" title="Chamados">
       <i class="fas fa-tasks"></i> <span>Chamados</span>
     </a>
-    <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Clientes">
+    <a href="{%url 'profile_list'%}" data-bs-toggle="tooltip" data-bs-placement="right" title="Clientes">
       <i class="fas fa-users"></i> <span>Clientes</span>
     </a>
     <a href="{% url 'params' %}" data-bs-toggle="tooltip" data-bs-placement="right" title="Configurações">
@@ -49,9 +49,9 @@
     <h3>
       {% block title %}Bem-vindo, {{ user.username }} ao MoveON!{% endblock %}
     </h3>
-      <div class="bar-tab-color-preview">
-          <hr style="border: none; height: 4px; background-color: rgb(29, 84, 172); margin: 0;">
-      </div>
+    <div class="bar-tab-color-preview">
+      <hr style="border: none; height: 4px; background-color:blanchedalmond; margin: 0;">
+    </div>
 
     <p>{% block content %}{% endblock %}</p>
   </div>

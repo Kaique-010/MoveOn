@@ -125,6 +125,7 @@ class Team(models.Model):
     def __str__(self):
         return f"{self.name}"
     
+    
 class Category(models.Model):
     name = models.CharField("Nome", max_length=100)
     description = models.TextField("Descrição", blank=True, null=True)
@@ -134,6 +135,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
 
 
 class Ticket(models.Model):

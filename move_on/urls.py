@@ -1,6 +1,11 @@
 from django.urls import path
-from .views import (CategoriesDelete, CategoriesUpdate, CategoryCreate, CategoryList, MenuViewiew, SlaDeleteView, SlaUpdateView, TicketCreate, TicketDelete,
+from .views import (CategoriesDelete, CategoriesUpdate, CategoryCreate,
+                    CategoryList, MenuViewiew, SlaDeleteView,
+                    SlaUpdateView, StatusTicketCreateView, StatusTicketDeleteView,
+                    StatusTicketListView, StatusTicketUpdateView, TeamCreateView,
+                    TeamDeleteView, TeamList, TeamUpdateView, TicketCreate, TicketDelete,
                     TicketDetail, TicketListView, TicketUpdate,
+                    UserListView, UserCreateView, UserUpdateView, UserDeleteView,
                     SlaList, SLACreateView, ParamsView)
 from .views_profile import (ProfileDeleteView, ProfileListView, ProfileCreateView, ProfileUpdateView
      
@@ -29,5 +34,20 @@ urlpatterns = [
     path('Profile/create', ProfileCreateView.as_view(), name='profile_form'),
     path('Profile/delete/<int:pk>', ProfileDeleteView.as_view(), name='profile_delete'),
     path('Profile/update/<int:pk>', ProfileUpdateView.as_view(), name='profile_update'),
+    
+    path('Status/list', StatusTicketListView.as_view(), name='status_list'),
+    path('Status/create', StatusTicketCreateView.as_view(), name='status_form'),
+    path('Status/<int:pk>/delete', StatusTicketDeleteView.as_view(), name='status_delete'),
+    path('Status/update/<int:pk>', StatusTicketUpdateView.as_view(), name='status_update'),
+    
+    path('Team/list', TeamList.as_view(), name='team_list'),
+    path('Team/create', TeamCreateView.as_view(), name='team_form'),
+    path('Team/delete/<int:pk>', TeamDeleteView.as_view(), name='team_delete'),
+    path('Team/update/<int:pk>', TeamUpdateView.as_view(), name='team_update'),
+    
+    path("users/list", UserListView.as_view(), name="user_list"),
+    path("users/create/", UserCreateView.as_view(), name="user_form"),
+    path("users/update/<int:pk>/", UserUpdateView.as_view(), name="user_update"),
+    path("users/delete/<int:pk>/", UserDeleteView.as_view(), name="user_delete"),
     
 ]
