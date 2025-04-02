@@ -1,0 +1,16 @@
+{% extends "Menu/menu.html" %}
+{% block content %}
+<h2>Trabalhadores de Folga</h2>
+<table border="1">
+    <tr>
+        <th>Trabalhador</th>
+        <th>Data</th>
+    </tr>
+    {% for schedule in day_off_schedules %}
+    <tr>
+        <td>{{ schedule.worker }}</td>
+        <td>{{ schedule.date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

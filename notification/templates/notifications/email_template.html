@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Aviso</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h2 { color: #333; }
+        p { font-size: 14px; }
+        .footer { margin-top: 20px; font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔔 Novo Aviso Publicado</h2>
+        <p><strong>Aviso:</strong> {{ resume }}</p>
+        <p><strong>Autor:</strong> {{ redator }}</p>
+        <p><strong>Data:</strong> {{ created_at }}</p>
+        <hr>
+        <p class="footer">Esta é uma mensagem automática, por favor, não responda.</p>
+    </div>
+</body>
+</html>

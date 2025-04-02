@@ -12,9 +12,11 @@
         <div class="card-body">
           <h6 class="card-title"><i class="bi bi-tools"></i> Gerais</h6>
           <ul class="list-unstyled">
+            <li><a href="{%url 'event_list'%}" class="text-primary">Agenda</a></li>
             <li>
               <a href="{%url 'categories_list'%}" class="text-primary">Categorias</a>
             </li>
+            <li><a href="" class="text-primary">Notificações</a></li>
             <li><a href="{%url 'sla_list'%}" class="text-primary">SLA's</a></li>
             <li><a href="{%url 'status_list'%}" class="text-primary">Status</a></li>
             <li><a href="#" class="text-primary">Workflows</a></li>
@@ -36,6 +38,7 @@
             </li>
             <li><a href="{% url 'user_list'%}" class="text-primary">Cadastro de Usuários</a></li>
             <li><a href="{%url 'team_list' %}" class="text-primary">Equipes</a></li>
+            <li><a href="{% url 'work_schedule_list'%}" class="text-primary">Escalas de Trabalho</a></li>
             <li><a href="#" class="text-primary">Perfis e Permissões</a></li>
           </ul>
         </div>
@@ -50,7 +53,7 @@
             <i class="fa-brands fa-teamspeak"></i> Tickets
           </h6>
           <ul class="list-unstyled">
-            <li><a href="#" class="text-primary">Alertas</a></li>
+            <li><a href="{%url 'notification_list'%}" class="text-primary">Alertas</a></li>
             <li><a href="#" class="text-primary">Status</a></li>
           </ul>
         </div>

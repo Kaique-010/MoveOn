@@ -23,9 +23,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'accounts',
     'move_on', 
     'chat',
+    'notification',
+    'schedule',
+    'work_schedule',
 ]
 
 MIDDLEWARE = [
@@ -115,7 +119,7 @@ CSRF_TRUSTED_ORIGINS = ['https://example.com', 'http://localhost:8000']
 
 LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -133,3 +137,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'move_on.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'suportespartacus2024@gmail.com'
+EMAIL_HOST_PASSWORD = 'sps@2413'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

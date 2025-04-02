@@ -1,0 +1,37 @@
+{% extends "Menu/menu.html" %} {% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+
+<h4 style="margin: 25px; text-align: center">
+    <i class="bi bi-calender fs-2"></i> Escalas de Trabalho
+</h4>
+
+<a href="{% url 'work_schedule_create' %}" class="btn btn-success" style="margin: 10px">
+    <i class="bi bi-plus"></i>
+    Nova Escala
+</a>
+<div class="table-responsive">
+    <table class="table table-sm table-striped">
+        <thead class="text-center">
+            <tr>
+                <th>Ações</th>
+                <th>Trabalhador</th>
+                <th>Data</th>
+                <th>Início</th>
+                <th>Término</th>
+                <th>Turno</th>
+                <th>Status</th>
+            </tr>
+            {% for schedule in schedules %}
+            <tr>
+                <td><a href="{% url 'work_schedule_edit' schedule.id %}">Editar</a></td>
+                <td>{{ schedule.worker }}</td>
+                <td>{{ schedule.date }}</td>
+                <td>{{ schedule.start_time }}</td>
+                <td>{{ schedule.end_time }}</td>
+                <td>{{ schedule.get_shift_type_display }}</td>
+                <td>{{ schedule.get_status_display }}</td>
+
+            </tr>
+            {% endfor %}
+    </table>
+    {% endblock %}

@@ -1,0 +1,16 @@
+{% extends "Menu/menu.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">Excluir Aviso</h2>
+    <p>Tem certeza que deseja excluir o aviso abaixo?</p>
+    <blockquote class="blockquote">
+        <p class="mb-0">{{ object.resume }}</p>
+        <footer class="blockquote-footer">{{ object.redator }} - {{ object.created_at|date:"d/m/Y H:i" }}</footer>
+    </blockquote>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Excluir</button>
+        <a href="{% url 'notification_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

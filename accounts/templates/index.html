@@ -1,4 +1,5 @@
-{% extends 'Menu/menu.html' %} {% block content %}
+{% extends 'Menu/menu.html' %}
+{% block content %}
 
 <style>
   @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css");
@@ -15,6 +16,21 @@
     padding: 20px;
   }
 
+  .container-mural .card {
+    background-color: transparent;
+    text-align: center;
+    display: flex;
+    margin-bottom: 25rem;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 15px;
+  }
+
+  .container-mural .card p,
+  h3 {
+    color: antiquewhite;
+    margin-top: 1rem;
+  }
 
   .dashboard-grid {
     display: grid;
@@ -67,12 +83,12 @@
 
   /* Cores dos cards de cima */
   .ticket-card.hoje {
-    background: #f8d7da;
-    /* Rosa pastel */
+    background: #add4fd;
+    /* Azul pastel */
   }
 
   .ticket-card.semana {
-    background: #fff3cd;
+    background: #ffffce;
     /* Amarelo pastel */
   }
 
@@ -111,11 +127,48 @@
     margin-bottom: 8px;
   }
 
+  /* Ajustes para o FullCalendar */
+  #calendar {
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+    width: 110%;
+    height: 80%;
+    margin-left: 15px;
+  }
 
+  .fc-daygrid-event {
+    background-color: #ff5733;
+    color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .fc-daygrid-day-number {
+    color: #fff;
+  }
+
+  .fc-toolbar-title {
+    color: #ffffff;
+    font-size: 8px;
+  }
+
+
+  .fc-button {
+    background: #4b7ea8;
+    border: none;
+    color: white;
+  }
+
+  .fc-button:hover {
+    background: #0056b3;
+  }
+
+  /* Responsividade */
   @media (max-width: 768px) {
     .container {
       padding: 100px;
-
     }
 
     .dashboard-grid {
@@ -125,7 +178,6 @@
     .ticket-card {
       font-size: 8px;
       padding: 0;
-
     }
 
     .ticket-icon {
@@ -147,6 +199,12 @@
 
     .roles-list li {
       font-size: 10px;
+    }
+
+    #calendar {
+      width: 100%;
+      max-width: none;
+      margin: 0 auto;
     }
   }
 </style>
@@ -225,5 +283,81 @@
     </div>
   </div>
 </div>
+
+<div class="container-mural">
+  <div class="card">
+    <h3>Mural</h3>
+    <div class="bar-tab-color-preview">
+      <hr style="border: none; height: 2px; background-color: blanchedalmond; margin: 0;">
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <p><strong>Agenda</strong></p>
+        <div id="calendar"></div>
+      </div>
+      <div class="col-4">
+        <p><strong>Avisos</strong></p>
+        {% if notifications %}
+        {% for notification in notifications %}
+        <strong style="margin-left: 45px; color:aliceblue">{{ notification.redator }}</strong> -
+        {{notification.created_at|date:"d/m/Y H:i"}}
+        <p style="margin-left: 45px; color:aliceblue">{{ notification.resume }}</p>
+        </li>
+        {% endfor %}
+        </ul>
+        {% else %}
+        <p>Sem notificações no momento.</p>
+        {% endif %}
+      </div>
+      <div class="col-4">
+        <p><strong>Escala</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CSS do FullCalendar -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+
+<!-- Scripts do FullCalendar -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      locale: 'pt-br',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      events: function (fetchInfo, successCallback, failureCallback) {
+        fetch('/schedule/api/events/')
+          .then(response => response.json())
+          .then(data => {
+            const events = data.map(event => ({
+              id: event.id,
+              title: event.title,
+              start: event.start_time,
+              end: event.end_time,
+              description: event.description,
+              user: event.user
+            }));
+            successCallback(events);
+          })
+          .catch(error => {
+            console.error("Erro ao carregar eventos:", error);
+            failureCallback(error);
+          });
+      }
+    });
+
+    calendar.render();
+  });
+</script>
 
 {% endblock %}
