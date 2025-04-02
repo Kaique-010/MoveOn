@@ -137,7 +137,6 @@ class Category(models.Model):
         return self.name
 
 
-
 class Ticket(models.Model):
     client = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name="tickets", null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_tickets", null=True, blank=True)
@@ -150,17 +149,17 @@ class Ticket(models.Model):
     updated_at = models.DateTimeField("Atualizado em", auto_now=True)
     due_date = models.DateTimeField("Previsão", null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
+    log = models.TextField("Log de Alterações", blank=True)
 
     class Meta:
         db_table = "tickets"
 
     def __str__(self):
         return f"#{self.id} - {self.title} ({self.status})"
-    
+
     def can_transition(self, user, to_status):
-        """ Verifica se o usuário pode avançar para o status desejado """
         if not self.status:
-            return False  # Não tem status atual
+            return False  
 
         transition = WorkflowTransition.objects.filter(
             workflow__client=self.client,
@@ -170,26 +169,69 @@ class Ticket(models.Model):
         ).exists()
 
         return transition
-    
+
     def change_status(self, user, to_status):
-        """ Tenta mudar o status do ticket se permitido """
         if not self.can_transition(user, to_status):
             raise PermissionError("Você não tem permissão para essa transição.")
-        
+
+        old_status = self.status
         self.status = to_status
         self.save()
-    
+
+        self.log += f"\n[{timezone.now()}] {user.username} alterou status de {old_status} para {to_status}"
+        self.save()
+
     def save(self, *args, **kwargs):
         if not self.due_date and self.sla:
-            
-            sla_time = self.sla.get_resolution_time()  # Retorna o timedelta (dias como timedelta)
+            sla_time = self.sla.get_resolution_time()  
             if sla_time:
-                # Calcule a data de vencimento somando o timedelta (SLA) ao tempo atual
-                self.due_date = timezone.now() + sla_time  # Adiciona o timedelta corretamente
+                self.due_date = timezone.now() + sla_time  
+
         super().save(*args, **kwargs)
 
 
+class TicketAction(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="actions")
+    action_number = models.IntegerField("Número da Ação")
+    performed_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    description = models.TextField("Descrição da Ação")
+    assigned_team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+    action_date = models.DateTimeField("Data da Ação", default=timezone.now)
+    action_start_time = models.TimeField("Hora de Início", null=True, blank=True)
+    action_end_time = models.TimeField("Hora de Fim", null=True, blank=True)
+    audio = models.FileField(upload_to="tickets/audios/", null=True, blank=True)
+    image = models.ImageField(upload_to="tickets/images/", null=True, blank=True)
 
+    class Meta:
+        db_table = "ticket_actions"
+        ordering = ["action_number"]
+
+    def __str__(self):
+        return f"Ação {self.action_number} no Ticket #{self.ticket.id} por {self.performed_by.username}"
+
+    @classmethod
+    def register_action(cls, ticket, user, description, assigned_team=None, start_time=None, end_time=None, audio=None, image=None):
+        """ Registra uma nova ação no ticket """
+        last_action = cls.objects.filter(ticket=ticket).order_by("-action_number").first()
+        action_number = last_action.action_number + 1 if last_action else 1
+
+        action = cls.objects.create(
+            ticket=ticket,
+            action_number=action_number,
+            performed_by=user,
+            description=description,
+            assigned_team=assigned_team,
+            action_start_time=start_time,
+            action_end_time=end_time,
+            audio=audio,
+            image=image
+        )
+
+        # Atualiza o log do ticket
+        ticket.log += f"\n[{timezone.now()}] Ação {action_number} realizada por {user.username}: {description}"
+        ticket.save()
+
+        return action
 
 
 class Workflow(models.Model):

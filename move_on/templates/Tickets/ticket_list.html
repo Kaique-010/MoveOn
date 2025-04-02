@@ -1,4 +1,8 @@
 {% extends "Menu/menu.html" %} {% block content %} {% load custom_filters %}
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+/>
 
 <h4 style="margin: 25px; text-align: center">
   <i class="fas fa-tasks"></i> Meus Tickets
@@ -24,14 +28,30 @@
       <tr>
         <td class="hide-on-small">
           <a href="{% url 'ticket_update' ticket.id %}">
-            <i class="fas fa-edit" aria-placeholder="Editar" tooltip="Editar"></i>
+            <i
+              class="fas fa-edit"
+              aria-placeholder="Editar"
+              tooltip="Editar"
+            ></i>
           </a>
           <a class="text-danger" href="{% url 'ticket_delete' ticket.id %}">
-            <i class="fas fa-trash-alt" aria-placeholder="Deletar" tooltip="Deletar"></i>
+            <i
+              class="fas fa-trash-alt"
+              aria-placeholder="Deletar"
+              tooltip="Deletar"
+            ></i>
+          </a>
+          <a class="text-success" href="{% url 'ticket_detail' ticket.id %}">
+            <i
+              class="bi bi-eye"
+              aria-placeholder="Detalhe"
+              tooltip="Detahlhes"
+            ></i>
           </a>
         </td>
         <td
-          style="background-color: {% if ticket.sla %}{{ ticket.sla.priority|get_color }}{% else %}#FFFFFF{% endif %}; color: white;">
+          style="background-color: {% if ticket.sla %}{{ ticket.sla.priority|get_color }}{% else %}#FFFFFF{% endif %}; color: white;"
+        >
           {% if ticket.sla %} {{ ticket.sla.get_priority_display }} {% else %}
           Não definido {% endif %}
         </td>
@@ -41,7 +61,8 @@
         <td>{{ ticket.status }}</td>
         <td>{{ ticket.created_by }}</td>
         <td>
-          {% if ticket.due_date %} {{ ticket.due_date|date:" d/m/Y H:i" }} {%else %} Não definido {% endif %}
+          {% if ticket.due_date %} {{ ticket.due_date|date:" d/m/Y H:i" }}
+          {%else %} Não definido {% endif %}
         </td>
         <td>{{ ticket.assigned_team }}</td>
       </tr>
@@ -56,7 +77,10 @@
 <!-- Importando jQuery e jQuery UI -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+<link
+  rel="stylesheet"
+  href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css"
+/>
 
 <!-- Script para tornar as colunas redimensionáveis -->
 <script>
@@ -70,7 +94,7 @@
       $("#ticketTable th").each(function () {
         $(this).resizable({
           handles: "e",
-          minWidth: 50
+          minWidth: 50,
         });
       });
     }

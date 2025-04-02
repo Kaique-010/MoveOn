@@ -165,7 +165,7 @@ h3 {
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
-  margin-top: 50vh; /* Ajusta dinamicamente conforme a altura da tela */
+  margin-top: 50vh;
 }
 
 .btn:hover {
@@ -191,7 +191,7 @@ h3 {
 
 @media (min-width: 820px) {
   .btn-danger-2 {
-    margin-top: 67vh;
+    margin-top: 60vh;
     font-size: 14px;
     padding: 6px 10px;
   }

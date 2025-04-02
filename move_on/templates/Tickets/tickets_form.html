@@ -112,8 +112,21 @@
         </div>
         {% endif %}
       </div>
+      <h3>Ação do Ticket</h3>
+      <div class="form-group">
+        {{ form.action_description }}
+        <!-- Descrição da Ação -->
+      </div>
+      <div class="form-group">
+        {{ form.action_start_time }}
+        <!-- Hora de Início -->
+      </div>
+      <div class="form-group">
+        {{ form.action_end_time }}
+        <!-- Hora de Fim -->
+      </div>
 
-      <<!-- Botões -->
+      <!-- Botões -->
       {% if form.instance.pk %}
       <button type="submit" class="btn btn-primary">Editar Tkt</button>
       {% else %}

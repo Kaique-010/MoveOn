@@ -1,0 +1,49 @@
+{% extends "Menu/menu.html" %} {% block content %}
+<div class="container" style="color: aliceblue;">
+  <h1>Detalhes do Ticket #{{ ticket.id }} - {{ ticket.title }}</h1>
+  <p><strong>Status:</strong> {{ ticket.status }}</p>
+  <p><strong>Criado por:</strong> {{ ticket.created_by }}</p>
+  <p><strong>Descrição:</strong> {{ ticket.description }}</p>
+
+  <h2>Log do Ticket</h2>
+  <pre>{{ ticket.log }}</pre>
+
+  <h2>Ações do Ticket</h2>
+  <table-responsive border="1">
+    <tr>
+      <th>Número</th>
+      <th>Descrição</th>
+      <th>Feito por</th>
+      <th>Data</th>
+      <th>Início</th>
+      <th>Fim</th>
+      <th>Mídia</th>
+    </tr>
+    {% for action in ticket.actions.all %}
+    <tr>
+      <td>{{ action.action_number }}</td>
+      <td>{{ action.description }}</td>
+      <td>{{ action.assigned_by }}</td>
+      <td>{{ action.action_date|date:"d/m/Y H:i" }}</td>
+      <td>{{ action.action_start_time }}</td>
+      <td>{{ action.action_end_time }}</td>
+      <td>
+        {% if action.audio %}
+        <audio controls>
+          <source src="{{ action.audio.url }}" type="audio/mpeg" />
+          Seu navegador não suporta áudio.
+        </audio>
+        {% endif %} {% if action.image %}
+        <img src="{{ action.image.url }}" alt="Imagem da ação" width="100" />
+        {% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="7">Nenhuma ação registrada.</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+{% endblock %}

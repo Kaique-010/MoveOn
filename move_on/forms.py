@@ -1,5 +1,4 @@
 from tkinter import Widget
-from attr import field
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import Category, Team, Ticket, TicketAlert, SLA, Profile, TicketStatus, User
@@ -9,15 +8,28 @@ class TicketForm(forms.ModelForm):
         model = Ticket
         fields = ['title', 'description', 'assigned_team', 'status', 'due_date', 'sla', 'client', 'category']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Entre com o Titulo geral do Tkt'}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Entre com o Título geral do Tkt'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 6, 'placeholder': 'Descreva quais são os problemas'}),
             'assigned_team': forms.Select(attrs={'class': 'form-select'}),
             'status': forms.Select(attrs={'class': 'form-select'}),
             'due_date': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
             'sla': forms.Select(attrs={'class': 'form-select'}),
             'client': forms.Select(attrs={'class': 'form-select'}),
-            'category': forms.Select(attrs={'class':'form-select', 'placeholder': 'Categorias'}),
+            'category': forms.Select(attrs={'class': 'form-select', 'placeholder': 'Categorias'}),
         }
+
+    # Campos adicionais para TicketAction
+    action_start_time = forms.TimeField(required=False)
+    action_end_time = forms.TimeField(required=False)
+    action_description = forms.CharField(widget=forms.Textarea, required=False)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Definindo os campos de `TicketAction` como campos extras no formulário
+        self.fields['action_start_time'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Hora de início'})
+        self.fields['action_end_time'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Hora de término'})
+        self.fields['action_description'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Descrição da ação'})
+
 
 class TicketAlertForm(forms.ModelForm):
     class Meta:

@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.urls import reverse_lazy
-from .models import SLA, Category, Team, Ticket, TicketAlert, TicketStatus, User
+from .models import SLA, Category, Team, Ticket, TicketAction, TicketAlert, TicketStatus, User
 from .forms import CategoryForm, SLAForm, TeamForm, TicketAlertForm, TicketForm, TicketStatusForm, UserForm, UserUpdateForm
 from django.db.models import Q
 
@@ -26,19 +26,27 @@ class TicketListView(LoginRequiredMixin,ListView):
                 return Ticket.objects.all()
             return Ticket.objects.filter(
                 Q(client=user.client) &
-                (Q(createted_by=user)) | Q(assigned_by=user) | Q(client=user.client)
+                (Q(created_by=user)) | Q(client=user.client)
             )
 
 
-class TicketDetail(LoginRequiredMixin, DetailView):
+class TicketDetailView(LoginRequiredMixin, DetailView):
     model = Ticket
-    template_name = 'tickets/tickets_detail'
-    
-    def get_queryset(self):
-        user = self.request.user
-        return Ticket.objects.filter(client=user.client)
+    template_name = "tickets/ticket_detail.html"
+    context_object_name = "ticket"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["actions"] = self.get_ticket_actions()
+        return context
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["actions"] = self.object.actions.all()  # Pegando todas as ações do ticket
+        return context
 
 
+# views.py
 
 class TicketCreate(LoginRequiredMixin, CreateView):
     model = Ticket
@@ -49,12 +57,29 @@ class TicketCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.client = self.request.user.client
+        ticket = form.save()
+
+        # Obtém dados do TicketAction
+        action_description = form.cleaned_data.get('action_description')
+        action_start_time = form.cleaned_data.get('action_start_time')
+        action_end_time = form.cleaned_data.get('action_end_time')
+
+        # Registra a ação no ticket
+        TicketAction.register_action(
+            ticket=ticket,
+            user=self.request.user,
+            description=action_description,
+            assigned_team=form.cleaned_data.get("assigned_team"),
+            start_time=action_start_time,
+            end_time=action_end_time
+        )
+        
         return super().form_valid(form)
 
     def form_invalid(self, form):
         print(form.errors)  # Para depuração no terminal
         return self.render_to_response(self.get_context_data(form=form))
-    
+
 
 class TicketUpdate(LoginRequiredMixin, UpdateView):
     model = Ticket
@@ -64,6 +89,28 @@ class TicketUpdate(LoginRequiredMixin, UpdateView):
 
     def get_queryset(self):
         return Ticket.objects.all()
+
+    def form_valid(self, form):
+        # Salva o ticket
+        ticket = form.save()
+
+        # Obtém dados do TicketAction
+        action_description = form.cleaned_data.get('action_description')
+        action_start_time = form.cleaned_data.get('action_start_time')
+        action_end_time = form.cleaned_data.get('action_end_time')
+
+        # Registra a ação no ticket
+        TicketAction.register_action(
+            ticket=ticket,
+            user=self.request.user,
+            description=action_description,
+            assigned_team=form.cleaned_data.get("assigned_team"),
+            start_time=action_start_time,
+            end_time=action_end_time
+        )
+
+        return super().form_valid(form)
+
     
 
 

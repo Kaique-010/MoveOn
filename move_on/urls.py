@@ -4,7 +4,7 @@ from .views import (CategoriesDelete, CategoriesUpdate, CategoryCreate,
                     SlaUpdateView, StatusTicketCreateView, StatusTicketDeleteView,
                     StatusTicketListView, StatusTicketUpdateView, TeamCreateView,
                     TeamDeleteView, TeamList, TeamUpdateView, TicketCreate, TicketDelete,
-                    TicketDetail, TicketListView, TicketUpdate,
+                    TicketDetailView, TicketListView, TicketUpdate,
                     UserListView, UserCreateView, UserUpdateView, UserDeleteView,
                     SlaList, SLACreateView, ParamsView)
 from .views_profile import (ProfileDeleteView, ProfileListView, ProfileCreateView, ProfileUpdateView
@@ -15,7 +15,7 @@ urlpatterns = [
     path('menu', MenuViewiew.as_view(), name='index'), 
     path('params', ParamsView.as_view(), name='params'), 
     path('tickets/list',TicketListView.as_view(), name="ticket_list"),
-    path('tickets/detail/<int:pk>', TicketDetail.as_view(), name="ticket_detail"),
+    path('tickets/detail/<int:pk>', TicketDetailView.as_view(), name="ticket_detail"),
     path('tickets/create', TicketCreate.as_view(), name="ticket_form"),
     path('tickets/update/<int:pk>', TicketUpdate.as_view(), name="ticket_update"),
     path('tickets/delete/<int:pk>', TicketDelete.as_view(), name="ticket_delete"),
