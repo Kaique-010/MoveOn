@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.urls import reverse_lazy
-from .models import SLA, Category, Team, Ticket, TicketAction, TicketAlert, TicketStatus, User
+from .models import SLA, Category, SLAPriority, Team, Ticket, TicketAction, TicketAlert, TicketStatus, User
 from .forms import CategoryForm, SLAForm, TeamForm, TicketAlertForm, TicketFilterForm, TicketForm, TicketStatusForm, UserForm, UserUpdateForm
 from django.db.models import Q
 
@@ -17,6 +17,8 @@ class TicketListView(LoginRequiredMixin, ListView):
     model = Ticket
     template_name = 'tickets/ticket_list.html'
     context_object_name = 'tickets'
+    paginate_by= 50
+    
 
     def get_queryset(self):
         user = self.request.user
@@ -55,6 +57,33 @@ class TicketListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            tickets = context["tickets"]
+            data = {
+                "tickets": [
+                    {
+                        "id": ticket.id,
+                        "client": ticket.client.name if ticket.client else "Não definido",
+                        "title": ticket.title,
+                        "status": ticket.status.name if ticket.status else "None",
+                        "created_by": ticket.created_by.username if ticket.created_by else "Não definido",
+                        "due_date": ticket.due_date.strftime("%Y-%m-%dT%H:%M:%S") if ticket.due_date else None,
+                        "assigned_team": ticket.assigned_team.name if ticket.assigned_team else "None",
+                        "priority": ticket.sla.get_priority_display() if ticket.sla else "Não definido",
+                        "priority_color": SLAPriority.get_color(ticket.sla.priority) if ticket.sla else "#FFFFFF",
+                        "update_url": f"update/{ticket.id}",
+                        "delete_url": f"delete/{ticket.id}",
+                        "detail_url": f"detail/{ticket.id}/",
+                    }
+                    for ticket in tickets
+                ],
+                "has_next": context["page_obj"].has_next(),
+            }
+            return JsonResponse(data)
+
+        return super().render_to_response(context, **response_kwargs)
 
 class TicketDetailView(LoginRequiredMixin, DetailView):
         model = Ticket

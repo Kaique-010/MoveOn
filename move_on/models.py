@@ -75,10 +75,10 @@ class SLAPriority(models.TextChoices):
     @classmethod
     def get_color(cls, value):
         color_map = {
-            cls.LOW: 'green',  
-            cls.MEDIUM: 'yellow', 
-            cls.HIGH: 'black', 
-            cls.CRITICAL: 'red',  
+            cls.LOW: '#00c16c',  
+            cls.MEDIUM: '#ffc52c', 
+            cls.HIGH: '#ff9915', 
+            cls.CRITICAL: '#CC3733',  
         }
         return color_map.get(value, 'gray')
 
