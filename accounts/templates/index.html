@@ -129,7 +129,7 @@
 
   /* Ajustes para o FullCalendar */
   #calendar {
-    background: #1e1e1e;
+    background: #12393d;
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
@@ -153,7 +153,9 @@
     color: #ffffff;
     font-size: 8px;
   }
-
+ .fc-col-header-cell-cushion{
+  color: #96e6ff;
+ }
 
   .fc-button {
     background: #4b7ea8;
@@ -299,8 +301,8 @@
         <p><strong>Avisos</strong></p>
         {% if notifications %}
         {% for notification in notifications %}
-        <strong style="margin-left: 45px; color:aliceblue">{{ notification.redator }}</strong> -
-        {{notification.created_at|date:"d/m/Y H:i"}}
+        <strong style="margin-left: 45px; color:aliceblue"> *{{ notification.redator }} -
+        {{notification.created_at|date:"d/m/Y H:i"}}</strong>
         <p style="margin-left: 45px; color:aliceblue">{{ notification.resume }}</p>
         </li>
         {% endfor %}
@@ -310,7 +312,7 @@
         {% endif %}
       </div>
       <div class="col-4">
-        <p><strong>Escala</strong></p>
+        <p><strong>Escala semanal</strong></p>
       </div>
     </div>
   </div>

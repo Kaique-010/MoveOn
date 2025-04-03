@@ -31,6 +31,45 @@ class TicketForm(forms.ModelForm):
         self.fields['action_description'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Descrição da ação'})
 
 
+class TicketFilterForm(forms.Form):
+    title = forms.CharField(
+        required=False, 
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por título'})
+    )
+    status = forms.ModelChoiceField(
+        queryset=TicketStatus.objects.all(), 
+        required=False, 
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    assigned_team = forms.ModelChoiceField(
+        queryset=Team.objects.all(), 
+        required=False, 
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    sla = forms.ModelChoiceField(
+        queryset=SLA.objects.all(), 
+        required=False, 
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.all(), 
+        required=False, 
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    created_at_start = forms.DateField(
+        required=False, 
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
+    )
+    created_at_end = forms.DateField(
+        required=False, 
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
+    )
+    client = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por cliente'})
+        
+    )
+
 class TicketAlertForm(forms.ModelForm):
     class Meta:
         model = TicketAlert

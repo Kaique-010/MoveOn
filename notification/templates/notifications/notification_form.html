@@ -1,7 +1,12 @@
 {% extends "Menu/menu.html" %}
 {% block content %}
+<style>
+    label{
+        color: aliceblue;
+    }
+</style>
 <div class="container">
-    <h2 class="mt-4">{% if form.instance.pk %}Editar Aviso{% else %}Criar Aviso{% endif %}</h2>
+    <h2 class="mt-4" style="color: aliceblue;">{% if form.instance.pk %}Editar Aviso{% else %}Criar Aviso{% endif %}</h2>
     <form method="post">
         {% csrf_token %}
         <div class="form-group">

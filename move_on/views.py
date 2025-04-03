@@ -7,43 +7,69 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.urls import reverse_lazy
 from .models import SLA, Category, Team, Ticket, TicketAction, TicketAlert, TicketStatus, User
-from .forms import CategoryForm, SLAForm, TeamForm, TicketAlertForm, TicketForm, TicketStatusForm, UserForm, UserUpdateForm
+from .forms import CategoryForm, SLAForm, TeamForm, TicketAlertForm, TicketFilterForm, TicketForm, TicketStatusForm, UserForm, UserUpdateForm
 from django.db.models import Q
 
 class MenuViewiew(LoginRequiredMixin,TemplateView):
     template_name = 'Menu/menu.html'
 
-class TicketListView(LoginRequiredMixin,ListView):
+class TicketListView(LoginRequiredMixin, ListView):
     model = Ticket
     template_name = 'tickets/ticket_list.html'
     context_object_name = 'tickets'
-    
+
     def get_queryset(self):
-            
-            user= self.request.user
-            
-            if user.is_superuser:
-                return Ticket.objects.all()
-            return Ticket.objects.filter(
-                Q(client=user.client) &
-                (Q(created_by=user)) | Q(client=user.client)
+        user = self.request.user
+        self.form = TicketFilterForm(self.request.GET)
+
+        # Define o queryset inicial baseado no usuário
+        if user.is_superuser:
+            queryset = Ticket.objects.all()
+        else:
+            queryset = Ticket.objects.filter(
+                Q(client=user.client) & (Q(created_by=user) | Q(client=user.client))
             )
 
+        # Aplica os filtros se o formulário for válido
+        if self.form.is_valid():
+            if self.form.cleaned_data["title"]:
+                queryset = queryset.filter(title__icontains=self.form.cleaned_data["title"])
+            if self.form.cleaned_data["status"]:
+                queryset = queryset.filter(status=self.form.cleaned_data["status"])
+            if self.form.cleaned_data["assigned_team"]:
+                queryset = queryset.filter(assigned_team=self.form.cleaned_data["assigned_team"])
+            if self.form.cleaned_data["sla"]:
+                queryset = queryset.filter(sla=self.form.cleaned_data["sla"])
+            if self.form.cleaned_data["category"]:
+                queryset = queryset.filter(category=self.form.cleaned_data["category"])
+            if self.form.cleaned_data["created_at_start"]:
+                queryset = queryset.filter(created_at__date__gte=self.form.cleaned_data["created_at_start"])
+            if self.form.cleaned_data["created_at_end"]:
+                queryset = queryset.filter(created_at__date__lte=self.form.cleaned_data["created_at_end"])
+            if self.form.cleaned_data["client"]:
+                queryset = queryset.filter(client__name__icontains=self.form.cleaned_data["client"])
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = self.form
+        return context
 
 class TicketDetailView(LoginRequiredMixin, DetailView):
-    model = Ticket
-    template_name = "tickets/ticket_detail.html"
-    context_object_name = "ticket"
+        model = Ticket
+        template_name = "tickets/ticket_detail.html"
+        context_object_name = "ticket"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["actions"] = self.get_ticket_actions()
-        return context
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context["actions"] = self.get_ticket_actions()
+            return context
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["actions"] = self.object.actions.all()  # Pegando todas as ações do ticket
-        return context
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context["actions"] = self.object.actions.all()  # Pegando todas as ações do ticket
+            return context
 
 
 # views.py

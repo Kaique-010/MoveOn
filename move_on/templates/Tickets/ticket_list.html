@@ -1,4 +1,35 @@
 {% extends "Menu/menu.html" %} {% block content %} {% load custom_filters %}
+<style>
+  .container-filters {
+    padding: 10px 15px;
+    font-size: 11px; /* Mantém o texto legível, mas compacto */
+
+    color: white; /* Mantém o texto visível */
+    border-radius: 8px; /* Bordas arredondadas para um visual moderno */
+    margin-bottom: 0px; /* Aproxima da tabela */
+  }
+  form {
+    max-width: 100%;
+    padding: 60px;
+  }
+  .container-but {
+    display: flex;
+    margin-left: 350px;
+  }
+  .btn-primary {
+    background-color: cadetblue;
+    color: antiquewhite;
+    border: None;
+  }
+  .btn-primary:hover {
+    background-color: rgb(230, 190, 165);
+    color: rgb(0, 0, 0);
+  }
+  .btn-secondary {
+    background-color: rgb(69, 69, 69);
+    color: rgb(255, 215, 200);
+  }
+</style>
 <link
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
@@ -7,98 +38,148 @@
 <h4 style="margin: 25px; text-align: center">
   <i class="fas fa-tasks"></i> Meus Tickets
 </h4>
-
-<div class="table-responsive">
-  <table class="table table-sm table-striped" id="ticketTable">
-    <thead class="text-center">
-      <tr>
-        <th class="hide-on-small">Ações</th>
-        <th>Prioridade</th>
-        <th>Nº do Tkt</th>
-        <th>Cliente/Empresa</th>
-        <th>Título</th>
-        <th>Status</th>
-        <th>Criado Por:</th>
-        <th>Previsto para:</th>
-        <th>Equipe Atual:</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for ticket in tickets %}
-      <tr>
-        <td class="hide-on-small">
-          <a href="{% url 'ticket_update' ticket.id %}">
-            <i
-              class="fas fa-edit"
-              aria-placeholder="Editar"
-              tooltip="Editar"
-            ></i>
+<div class="container-fluid">
+  <div class="container-filters p-3 rounded shadow">
+    <form method="GET" class="row g-3">
+      <div class="col-md-3">
+        <label for="id_title" class="form-label">Título</label>
+        {{ form.title }}
+      </div>
+      <div class="col-md-3">
+        <label for="id_status" class="form-label">Status</label>
+        {{ form.status }}
+      </div>
+      <div class="col-md-3">
+        <label for="id_assigned_team" class="form-label">Equipe</label>
+        {{ form.assigned_team }}
+      </div>
+      <div class="col-md-3">
+        <label for="id_sla" class="form-label">SLA</label>
+        {{ form.sla }}
+      </div>
+      <div class="col-md-3">
+        <label for="id_category" class="form-label">Categoria</label>
+        {{ form.category }}
+      </div>
+      <div class="col-md-3">
+        <label for="id_created_at_start" class="form-label">Criado de</label>
+        {{ form.created_at_start }}
+      </div>
+      <div class="col-md-3">
+        <label for="id_created_at_end" class="form-label">Criado até</label>
+        {{ form.created_at_end }}
+      </div>
+      <div class="col-md-3">
+        <label for="id_client" class="form-label">Cliente</label>
+        {{ form.client }}
+      </div>
+      <div class="container-but">
+        <div class="col-md-3 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i> Filtrar
+          </button>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <a href="{% url 'ticket_list' %}" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Limpar
           </a>
-          <a class="text-danger" href="{% url 'ticket_delete' ticket.id %}">
-            <i
-              class="fas fa-trash-alt"
-              aria-placeholder="Deletar"
-              tooltip="Deletar"
-            ></i>
-          </a>
-          <a class="text-success" href="{% url 'ticket_detail' ticket.id %}">
-            <i
-              class="bi bi-eye"
-              aria-placeholder="Detalhe"
-              tooltip="Detahlhes"
-            ></i>
-          </a>
-        </td>
-        <td
-          style="background-color: {% if ticket.sla %}{{ ticket.sla.priority|get_color }}{% else %}#FFFFFF{% endif %}; color: white;"
-        >
-          {% if ticket.sla %} {{ ticket.sla.get_priority_display }} {% else %}
-          Não definido {% endif %}
-        </td>
-        <td>{{ ticket.id }}</td>
-        <td>{{ ticket.client }}</td>
-        <td>{{ ticket.title }}</td>
-        <td>{{ ticket.status }}</td>
-        <td>{{ ticket.created_by }}</td>
-        <td>
-          {% if ticket.due_date %} {{ ticket.due_date|date:" d/m/Y H:i" }}
-          {%else %} Não definido {% endif %}
-        </td>
-        <td>{{ ticket.assigned_team }}</td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="9" class="text-center">Nenhum ticket encontrado.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-<!-- Importando jQuery e jQuery UI -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<link
-  rel="stylesheet"
-  href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css"
-/>
+        </div>
+      </div>
+    </form>
+  </div>
 
-<!-- Script para tornar as colunas redimensionáveis -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    if (typeof jQuery === "undefined") {
-      console.error("jQuery não carregou!");
-    } else {
-      console.log("jQuery carregado com sucesso!");
+  <div class="table-responsive" style="margin-left: 60px">
+    <table class="table table-sm table-striped" id="ticketTable">
+      <thead class="text-center">
+        <tr>
+          <th class="hide-on-small">Ações</th>
+          <th>Prioridade</th>
+          <th>Nº do Tkt</th>
+          <th>Cliente/Empresa</th>
+          <th>Título</th>
+          <th>Status</th>
+          <th>Criado Por:</th>
+          <th>Previsto para:</th>
+          <th>Equipe Atual:</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ticket in tickets %}
+        <tr>
+          <td class="hide-on-small">
+            <a href="{% url 'ticket_update' ticket.id %}">
+              <i
+                class="fas fa-edit"
+                aria-placeholder="Editar"
+                tooltip="Editar"
+              ></i>
+            </a>
+            <a class="text-danger" href="{% url 'ticket_delete' ticket.id %}">
+              <i
+                class="fas fa-trash-alt"
+                aria-placeholder="Deletar"
+                tooltip="Deletar"
+              ></i>
+            </a>
+            <a class="text-success" href="{% url 'ticket_detail' ticket.id %}">
+              <i
+                class="bi bi-eye"
+                aria-placeholder="Detalhe"
+                tooltip="Detahlhes"
+              ></i>
+            </a>
+          </td>
+          <td
+            style="background-color: {% if ticket.sla %}{{ ticket.sla.priority|get_color }}{% else %}#FFFFFF{% endif %}; color: white;"
+          >
+            {% if ticket.sla %} {{ ticket.sla.get_priority_display }} {% else %}
+            Não definido {% endif %}
+          </td>
+          <td>{{ ticket.id }}</td>
+          <td>{{ ticket.client }}</td>
+          <td>{{ ticket.title }}</td>
+          <td>{{ ticket.status }}</td>
+          <td>{{ ticket.created_by }}</td>
+          <td>
+            {% if ticket.due_date %} {{ ticket.due_date|date:" d/m/Y H:i" }}
+            {%else %} Não definido {% endif %}
+          </td>
+          <td>{{ ticket.assigned_team }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="9" class="text-center">Nenhum ticket encontrado.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- Importando jQuery e jQuery UI -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css"
+  />
 
-      // Aplicando jQuery UI para tornar as colunas ajustáveis
-      $("#ticketTable th").each(function () {
-        $(this).resizable({
-          handles: "e",
-          minWidth: 50,
+  <!-- Script para tornar as colunas redimensionáveis -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (typeof jQuery === "undefined") {
+        console.error("jQuery não carregou!");
+      } else {
+        console.log("jQuery carregado com sucesso!");
+
+        // Aplicando jQuery UI para tornar as colunas ajustáveis
+        $("#ticketTable th").each(function () {
+          $(this).resizable({
+            handles: "e",
+            minWidth: 50,
+          });
         });
-      });
-    }
-  });
-</script>
+      }
+    });
+  </script>
 
-{% endblock %}
+  {% endblock %}
+</div>
