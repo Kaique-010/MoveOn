@@ -9,67 +9,67 @@
   <i class="bi bi-plus"></i>
   Novo Profile
 </a>
+<div class="container-fluid">
+  <div class="table-responsive">
+    <table class="table table-sm table-striped" id="ticketTable">
+      <thead class="text-center">
+        <tr>
+          <th>Ações</th>
+          <th>Nome</th>
+          <th>Documento (CPF/CNPJ)</th>
+          <th>E-mail</th>
+          <th>Telefone</th>
+          <th>Ativo?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for profile in profiles %}
+        <tr>
+          <td>
+            <a href="{% url 'profile_update' profile.id %}">
+              <i class="fas fa-edit" aria-placeholder="Editar" tooltip="Editar"></i>
+            </a>
+            <a class="text-danger" href="{% url 'profile_delete' profile.id %}">
+              <i class="fas fa-trash-alt" aria-placeholder="Deletar" tooltip="Deletar"></i>
+            </a>
+          </td>
+          <td>{{ profile.name }}</td>
+          <td>{{ profile.document }}</td>
+          <td>{{ profile.email }}</td>
+          <td>{{ profile.phone }}</td>
+          <td>{%if profile.active%} Ativo {%else%} Inativo {%endif%}</td>
+          {% empty %}
+        </tr>
 
-<div class="table-responsive">
-  <table class="table table-sm table-striped" id="ticketTable">
-    <thead class="text-center">
-      <tr>
-        <th>Ações</th>
-        <th>Nome</th>
-        <th>Documento (CPF/CNPJ)</th>
-        <th>E-mail</th>
-        <th>Telefone</th>
-        <th>Ativo?</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for profile in profiles %}
-      <tr>
-        <td>
-          <a href="{% url 'profile_update' profile.id %}">
-            <i class="fas fa-edit" aria-placeholder="Editar" tooltip="Editar"></i>
-          </a>
-          <a class="text-danger" href="{% url 'profile_delete' profile.id %}">
-            <i class="fas fa-trash-alt" aria-placeholder="Deletar" tooltip="Deletar"></i>
-          </a>
-        </td>
-        <td>{{ profile.name }}</td>
-        <td>{{ profile.document }}</td>
-        <td>{{ profile.email }}</td>
-        <td>{{ profile.phone }}</td>
-        <td>{%if profile.active%} Ativo {%else%} Inativo {%endif%}</td>
-        {% empty %}
-      </tr>
+        <tr>
+          <td colspan="9" class="text-center">Nenhuma Categoria encontrada.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- Importando jQuery e jQuery UI -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
-      <tr>
-        <td colspan="9" class="text-center">Nenhuma Categoria encontrada.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-<!-- Importando jQuery e jQuery UI -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+  <!-- Script para tornar as colunas redimensionáveis -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (typeof jQuery === "undefined") {
+        console.error("jQuery não carregou!");
+      } else {
+        console.log("jQuery carregado com sucesso!");
 
-<!-- Script para tornar as colunas redimensionáveis -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    if (typeof jQuery === "undefined") {
-      console.error("jQuery não carregou!");
-    } else {
-      console.log("jQuery carregado com sucesso!");
-      
-      // Aplicando jQuery UI para tornar as colunas ajustáveis
-      $("#ticketTable th").each(function () {
-        $(this).resizable({
-          handles: "e",
-          minWidth: 50
+        // Aplicando jQuery UI para tornar as colunas ajustáveis
+        $("#ticketTable th").each(function () {
+          $(this).resizable({
+            handles: "e",
+            minWidth: 50
+          });
         });
-      });
-    }
-  });
-</script>
+      }
+    });
+  </script>
 
-{% endblock %}
+  {% endblock %}

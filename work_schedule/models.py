@@ -72,17 +72,15 @@ class WorkSchedule(models.Model):
         return total_seconds / 3600
     
     def set_day_off(self):
-        from schedule.models import WorkShift  # Importação dentro do método para evitar import circular
-        
-        if self.override_day_off:
-            return  # Se a folga for manual, não altera
-        
         try:
-            work_shift = WorkShift.objects.get(worker=self.worker)
+            if self.override_day_off:
+                return  # Se a folga for manual, não altera
+            
+            work_shift = WorkShiftConfig.objects.get(worker=self.worker)
             max_weekly_hours = work_shift.total_hours
-        except WorkShift.DoesNotExist:
+        except WorkShiftConfig.DoesNotExist:
             max_weekly_hours = 40  # Valor padrão caso não tenha jornada definida
-        
+
         if self.total_hours_week(self.worker, self.date - timedelta(days=self.date.weekday())) >= max_weekly_hours:
             self.status = 'day_off'
     

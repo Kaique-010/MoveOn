@@ -68,7 +68,7 @@ h3 {
 /* Conteúdo principal */
 .content {
   margin-left: 100px;
-  margin-top: 3px;
+  margin-top: 50px;
 }
 
 /*icones*/
@@ -119,6 +119,7 @@ h3 {
   background-color: #1e3a4b; /* Fundo escuro */
   border-radius: 8px;
   overflow: hidden;
+  padding: 25px;
 }
 
 .table th {

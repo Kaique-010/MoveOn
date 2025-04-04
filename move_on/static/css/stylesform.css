@@ -1,3 +1,9 @@
+.tkt form {
+  padding: 25px;
+  box-shadow: 0px 6px 4px 6px rgb(253, 255, 221);
+  border-radius: 25px 20px;
+}
+
 .form-group {
   padding: 10px;
   color: antiquewhite;
@@ -36,6 +42,8 @@ h2 {
   color: aliceblue;
   font-size: 20px;
   margin-top: 25px;
+  font-style: italic;
+  text-decoration: underline antiquewhite;
 }
 
 .btn-primary {
@@ -95,7 +103,9 @@ h2 {
 
 #tkt {
   border-radius: 10px;
-  padding: 40px;
+  border-color: aliceblue;
+  border-style: unset;
+  padding: 100px;
   font-size: 8px;
 }
 
@@ -107,7 +117,8 @@ h2 {
 
   .form-group input,
   .form-group select,
-  .form-group textarea {
+  .form-group textarea,
+  div.form-group {
     font-size: 12px;
     padding: 6px;
     height: auto;
@@ -123,5 +134,9 @@ h2 {
   #tkt {
     padding: 20px;
     font-size: 10px;
+  }
+
+  .hide-on-small {
+    display: none;
   }
 }

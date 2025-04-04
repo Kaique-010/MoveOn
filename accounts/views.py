@@ -6,6 +6,7 @@ from django.http import HttpRequest, JsonResponse
 from django.views.generic import TemplateView
 from move_on.models import Ticket, Category, User
 from notification.models import Notifications
+from work_schedule.models import WorkSchedule
 
 def custom_login(request):
     if request.method == 'POST':
@@ -44,6 +45,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
         usuarios = User.objects.annotate(ticket_count= Count("created_tickets"))
         unknow_user = Ticket.objects.filter(created_by__isnull=True).count()
         notifications = Notifications.objects.all().order_by('-created_at')[:10]
+        work_schedule = WorkSchedule.objects.all().order_by('-id')[:5]
         
         # Definindo os papéis (roles) para simplificação
         roles = {
@@ -73,7 +75,8 @@ class IndexView(LoginRequiredMixin, TemplateView):
             'uncategorized_tickets': uncategorized_tickets,  # Tickets sem categoria
             'unknow_user':unknow_user,
             'usuarios': usuarios,
-            'notifications': notifications
+            'notifications': notifications,
+            'work_schedule':work_schedule
         })
 
         return context

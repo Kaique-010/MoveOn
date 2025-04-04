@@ -1,7 +1,7 @@
 {% extends "Menu/menu.html" %} {% load custom_filter %} {% block content %}
 <style>
   .container {
-    margin-top: 5px;
+    margin-top: 20px;
     margin-left: -10px;
   }
 
@@ -20,7 +20,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 20px;
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
   }
 
   .card h3 {
@@ -104,6 +104,7 @@
     .container {
       margin-left: -20px;
     }
+
     .row {
       flex-direction: column;
       align-items: center;
@@ -117,6 +118,7 @@
     .col-8 {
       width: 300px;
     }
+
     .card {
       font-size: 14px;
     }
@@ -155,10 +157,11 @@
   }
 </style>
 
-<h2>Painel do Chat - Administrador</h2>
-<div class="container">
+
+<div class="container-fluid">
+  <h2>Painel do Chat - Administrador</h2>
   <div class="row">
-    <div class="col-4">
+    <div class="col-md-5 col-12 ">
       <div class="card">
         <h3>🟢 Atendentes Online</h3>
         <ul>
@@ -171,7 +174,7 @@
       </div>
     </div>
 
-    <div class="col-4">
+    <div class="col-md-5 col-12 ">
       <div class="card">
         <h3>🔴 Atendentes Offline</h3>
         <ul>
@@ -186,7 +189,7 @@
   </div>
 
   <div class="row">
-    <div class="col-8">
+    <div class="col-md-8 col-12">
       <div class="card">
         <h3>Resumo dos Atendimentos</h3>
         <div class="table-container">
@@ -210,9 +213,13 @@
           </table>
         </div>
       </div>
-      <button class="update-btn" onclick="updatePanel()">
-        Atualizar Painel
-      </button>
+      <div class="row">
+        <div class="col-md-4 col-12">
+          <button class="update-btn" onclick="updatePanel()">
+            Atualizar Painel
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

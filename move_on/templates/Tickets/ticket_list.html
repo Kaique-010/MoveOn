@@ -30,6 +30,7 @@
 
   form {
     width: 92%;
+
   }
 
   /* Ajustes responsivos */
@@ -69,11 +70,12 @@
       display: none;
     }
   }
+
   @media (max-width: 768px) {
     .table-responsive {
       overflow-x: auto;
       display: block;
-      white-space: nowrap; 
+      white-space: nowrap;
     }
 
     table {
@@ -106,10 +108,7 @@
     }
   }
 </style>
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
 
 <h4 style="margin: 25px; text-align: center">
   <i class="fas fa-tasks"></i> Meus Tickets
@@ -120,119 +119,106 @@
 </button>
 
 
-  <!-- Formulário de filtros -->
-  <div class="filters p-3 rounded shadow" id="filterContainer">
-    <form method="GET" class="row g-2">
-      <div class="col-md-3 col-12 hide-on-small">
-        <label for="id_title" class="form-label">Título</label>
-        {{ form.title }}
-      </div>
-      <div class="col-md-3 col-12">
-        <label for="id_status" class="form-label">Status</label>
-        {{ form.status }}
-      </div>
-      <div class="col-md-3 col-12 hide-on-small">
-        <label for="id_assigned_team" class="form-label">Equipe</label>
-        {{ form.assigned_team }}
-      </div>
-      <div class="col-md-3 col-12 hide-on-small">
-        <label for="id_sla" class="form-label">SLA</label>
-        {{ form.sla }}
-      </div>
-      <div class="col-md-3 col-12">
-        <label for="id_category" class="form-label">Categoria</label>
-        {{ form.category }}
-      </div>
-      <div class="col-md-3 col-12">
-        <label for="id_created_at_start" class="form-label">Criado de</label>
-        {{ form.created_at_start }}
-      </div>
-      <div class="col-md-3 col-12">
-        <label for="id_created_at_end" class="form-label">Criado até</label>
-        {{ form.created_at_end }}
-      </div>
-      <div class="col-md-3 col-12">
-        <label for="id_client" class="form-label">Cliente</label>
-        {{ form.client }}
-      </div>
-      <div class="container-but">
-        <button type="submit" class="btn btn-primary">
-          <i class="fas fa-search"></i> Filtrar
-        </button>
-        <a href="{% url 'ticket_list' %}" class="btn btn-secondary">
-          <i class="fas fa-times"></i> Limpar
-        </a>
-      </div>
-    </form>
-  </div>
+<!-- Formulário de filtros -->
+<div class="filters p-3 rounded shadow" id="filterContainer">
+  <form method="GET" class="row g-2">
+    <div class="col-md-3 col-12 hide-on-small">
+      <label for="id_title" class="form-label">Título</label>
+      {{ form.title }}
+    </div>
+    <div class="col-md-3 col-12">
+      <label for="id_status" class="form-label">Status</label>
+      {{ form.status }}
+    </div>
+    <div class="col-md-3 col-12 hide-on-small">
+      <label for="id_assigned_team" class="form-label">Equipe</label>
+      {{ form.assigned_team }}
+    </div>
+    <div class="col-md-3 col-12 hide-on-small">
+      <label for="id_sla" class="form-label">SLA</label>
+      {{ form.sla }}
+    </div>
+    <div class="col-md-3 col-12">
+      <label for="id_category" class="form-label">Categoria</label>
+      {{ form.category }}
+    </div>
+    <div class="col-md-3 col-12">
+      <label for="id_created_at_start" class="form-label">Criado de</label>
+      {{ form.created_at_start }}
+    </div>
+    <div class="col-md-3 col-12">
+      <label for="id_created_at_end" class="form-label">Criado até</label>
+      {{ form.created_at_end }}
+    </div>
+    <div class="col-md-3 col-12">
+      <label for="id_client" class="form-label">Cliente</label>
+      {{ form.client }}
+    </div>
+    <div class="container-but">
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-search"></i> Filtrar
+      </button>
+      <a href="{% url 'ticket_list' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Limpar
+      </a>
+    </div>
+  </form>
+</div>
 
-  <!-- Tabela responsiva -->
-  <div class="table-responsive">
-    <table class="table table-sm table-striped" id="ticketTable">
-      <thead class="text-center">
-        <tr>
-          <th class="hide-on-small">Ações</th>
-          <th>Prioridade</th>
-          <th>Nº do Tkt</th>
-          <th>Cliente/Empresa</th>
-          <th>Título</th>
-          <th>Status</th>
-          <th>Criado Por:</th>
-          <th>Previsto para:</th>
-          <th>Equipe Atual:</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for ticket in tickets %}
-        <tr>
-          <td class="hide-on-small">
-            <a href="{% url 'ticket_update' ticket.id %}">
-              <i
-                class="fas fa-edit"
-                aria-placeholder="Editar"
-                tooltip="Editar"
-              ></i>
-            </a>
-            <a class="text-danger" href="{% url 'ticket_delete' ticket.id %}">
-              <i
-                class="fas fa-trash-alt"
-                aria-placeholder="Deletar"
-                tooltip="Deletar"
-              ></i>
-            </a>
-            <a class="text-success" href="{% url 'ticket_detail' ticket.id %}">
-              <i
-                class="bi bi-eye"
-                aria-placeholder="Detalhe"
-                tooltip="Detalhes"
-              ></i>
-            </a>
-          </td>
-          <td
-            style="background-color: {% if ticket.sla %}{{ ticket.sla.priority|get_color }}{% else %}#FFFFFF{% endif %}; color: white;"
-          >
-            {% if ticket.sla %} {{ ticket.sla.get_priority_display }} {% else %}
-            Não definido {% endif %}
-          </td>
-          <td>{{ ticket.id }}</td>
-          <td>{{ ticket.client }}</td>
-          <td>{{ ticket.title }}</td>
-          <td>{{ ticket.status }}</td>
-          <td>{{ ticket.created_by }}</td>
-          <td>
-            {% if ticket.due_date %} {{ ticket.due_date|date:" d/m/Y H:i" }}
-            {%else %} Não definido {% endif %}
-          </td>
-          <td>{{ ticket.assigned_team }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="9" class="text-center">Nenhum ticket encontrado.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+<!-- Tabela responsiva -->
+<div class="table-responsive">
+  <table class="table table-sm table-striped" id="ticketTable">
+    <thead class="text-center">
+      <tr>
+        <th class="hide-on-small">Ações</th>
+        <th>Prioridade</th>
+        <th>Nº do Tkt</th>
+        <th>Cliente/Empresa</th>
+        <th>Título</th>
+        <th>Status</th>
+        <th>Criado Por:</th>
+        <th>Previsto para:</th>
+        <th>Equipe Atual:</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ticket in tickets %}
+      <tr>
+        <td class>
+          <a href="{% url 'ticket_update' ticket.id %}">
+            <i class="fas fa-edit" aria-placeholder="Editar" tooltip="Editar"></i>
+          </a>
+          <a class="text-danger" href="{% url 'ticket_delete' ticket.id %}">
+            <i class="fas fa-trash-alt" aria-placeholder="Deletar" tooltip="Deletar"></i>
+          </a>
+          <a class="text-success" href="{% url 'ticket_detail' ticket.id %}">
+            <i class="bi bi-eye" aria-placeholder="Detalhe" tooltip="Detalhes"></i>
+          </a>
+        </td>
+        <td
+          style="background-color: {% if ticket.sla %}{{ ticket.sla.priority|get_color }}{% else %}#FFFFFF{% endif %}; color: white;">
+          {% if ticket.sla %} {{ ticket.sla.get_priority_display }} {% else %}
+          Não definido {% endif %}
+        </td>
+        <td>{{ ticket.id }}</td>
+        <td>{{ ticket.client }}</td>
+        <td>{{ ticket.title }}</td>
+        <td>{{ ticket.status }}</td>
+        <td>{{ ticket.created_by }}</td>
+        <td>
+          {% if ticket.due_date %} {{ ticket.due_date|date:" d/m/Y H:i" }}
+          {%else %} Não definido {% endif %}
+        </td>
+        <td>{{ ticket.assigned_team }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="9" class="text-center">Nenhum ticket encontrado.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 </div>
 
 <!-- Script para exibir/esconder os filtros -->
@@ -279,23 +265,19 @@
           row.innerHTML = `
             <td class="hide-on-small">
               <a href="${ticket.update_url}"><i class="fas fa-edit"></i></a>
-              <a href="${
-                ticket.delete_url
-              }" class="text-danger"><i class="fas fa-trash-alt"></i></a>
-              <a href="${
-                ticket.detail_url
-              }" class="text-success"><i class="bi bi-eye"></i></a>
+              <a href="${ticket.delete_url
+            }" class="text-danger"><i class="fas fa-trash-alt"></i></a>
+              <a href="${ticket.detail_url
+            }" class="text-success"><i class="bi bi-eye"></i></a>
             </td>
-            <td style="background-color: ${
-              ticket.priority_color
+            <td style="background-color: ${ticket.priority_color
             }; color: white;">${ticket.priority}</td>
             <td>${ticket.id}</td>
             <td>${ticket.client}</td>
             <td>${ticket.title}</td>
             <td class="${ticket.status_class} text-white">${ticket.status}</td>
             <td>${ticket.created_by}</td>
-            <td>${
-              ticket.due_date ? formatDate(ticket.due_date) : "Não definido"
+            <td>${ticket.due_date ? formatDate(ticket.due_date) : "Não definido"
             }</td>
             <td>${ticket.assigned_team}</td>
           `;
