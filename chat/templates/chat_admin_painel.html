@@ -1,7 +1,8 @@
 {% extends "Menu/menu.html" %} {% load custom_filter %} {% block content %}
 <style>
   .container {
-    margin-top: 20px;
+    margin-top: 5px;
+    margin-left: -10px;
   }
 
   h2 {
@@ -9,29 +10,41 @@
     font-weight: bold;
     color: #ffffff;
     margin-bottom: 20px;
+    margin-top: 15px;
+    text-align: center;
   }
 
   .card {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
     padding: 20px;
+    text-align: center;
+    margin-bottom: 40px;
   }
 
   .card h3 {
     font-size: 20px;
     color: #2c3e50;
+    margin-bottom: 10px;
   }
 
   .row {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    flex-wrap: wrap;
     gap: 20px;
   }
 
   .col-4 {
     flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+  }
+
+  .col-8 {
+    flex: 2;
+    max-width: 820px;
   }
 
   ul {
@@ -42,6 +55,11 @@
   li {
     padding: 5px 0;
     font-size: 16px;
+  }
+
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
   }
 
   table {
@@ -67,23 +85,78 @@
   }
 
   .update-btn {
-    background-color: #2d4352;
-    color: white;
+    background-color: #103e5c;
+    color: aliceblue;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 20px;
+    text-align: center;
   }
 
   .update-btn:hover {
     background-color: #2980b9;
   }
+
+  /* Responsivo */
+  @media (max-width: 768px) {
+    .container {
+      margin-left: -20px;
+    }
+    .row {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .col-4 {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .col-8 {
+      width: 300px;
+    }
+    .card {
+      font-size: 14px;
+    }
+
+    .card h3 {
+      font-size: 16px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    th,
+    td {
+      font-size: 8px;
+    }
+
+    li {
+      font-size: 10px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .update-btn {
+      background-color: #10575c;
+      color: aliceblue;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 15, 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      text-align: center;
+    }
+  }
 </style>
 
+<h2>Painel do Chat - Administrador</h2>
 <div class="container">
-  <h2>Painel do Chat - Administrador</h2>
-
   <div class="row">
     <div class="col-4">
       <div class="card">
@@ -112,41 +185,48 @@
     </div>
   </div>
 
-  <div class="card">
-    <h3>Resumo dos Atendimentos</h3>
-    <table>
-      <tr>
-        <th>Atendente</th>
-        <th>Atendimentos Feitos</th>
-        <th>Clientes Atendidos</th>
-      </tr>
-      {% for attendant in attendants_data %}
-      <tr>
-        <td>{{ attendant.username }}</td>
-        <td>{{ attendant.total_tickets }}</td>
-        <td>
-          {% for client in attendant_clients|get_item:attendant.id %} {{ client
-          }}{% if not forloop.last %}, {% endif %} {% empty %} Nenhum cliente
-          atendido. {% endfor %}
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
+  <div class="row">
+    <div class="col-8">
+      <div class="card">
+        <h3>Resumo dos Atendimentos</h3>
+        <div class="table-container">
+          <table>
+            <tr>
+              <th>Atendente</th>
+              <th>Atendimentos Feitos</th>
+              <th>Clientes Atendidos</th>
+            </tr>
+            {% for attendant in attendants_data %}
+            <tr>
+              <td>{{ attendant.username }}</td>
+              <td>{{ attendant.total_tickets }}</td>
+              <td>
+                {% for client in attendant_clients|get_item:attendant.id %} {{
+                client }} {% if not forloop.last %}, {% endif %} {% empty %}
+                Nenhum cliente atendido. {% endfor %}
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      <button class="update-btn" onclick="updatePanel()">
+        Atualizar Painel
+      </button>
+    </div>
   </div>
 
-  <button class="update-btn" onclick="updatePanel()">Atualizar Painel</button>
+  <script>
+    function updatePanel() {
+      fetch("{% url 'chat_admin_panel' %}")
+        .then((response) => response.text())
+        .then((html) => {
+          document.body.innerHTML = html;
+        });
+    }
+
+    setInterval(updatePanel, 10000); // Atualiza a cada 10 segundos
+  </script>
+
+  {% endblock %}
 </div>
-
-<script>
-  function updatePanel() {
-    fetch("{% url 'chat_admin_panel' %}")
-      .then((response) => response.text())
-      .then((html) => {
-        document.body.innerHTML = html;
-      });
-  }
-
-  setInterval(updatePanel, 10000); // Atualiza a cada 10 segundos
-</script>
-
-{% endblock %}

@@ -169,46 +169,63 @@
 
   /* Responsividade */
   @media (max-width: 768px) {
-    .container {
-      padding: 100px;
-    }
-
-    .dashboard-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .ticket-card {
-      font-size: 8px;
-      padding: 0;
-    }
-
-    .ticket-icon {
-      font-size: 18px;
-      width: 60px;
-    }
-
-    .ticket-count {
-      font-size: 10px;
-    }
-
-    .roles-card {
-      padding: auto;
-    }
-
-    .roles-card-title {
-      font-size: 12px;
-    }
-
-    .roles-list li {
-      font-size: 10px;
-    }
-
-    #calendar {
-      width: 100%;
-      max-width: none;
-      margin: 0 auto;
-    }
+  .container {
+    padding: 50px;
   }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr); /* Reduzi para 2 colunas */
+    gap: 10px;
+  }
+
+  .ticket-card {
+    font-size: 10px;
+    padding: 5px;
+  }
+
+  .ticket-icon {
+    font-size: 16px;
+    width: 40px;
+  }
+
+  .ticket-count {
+    font-size: 14px;
+  }
+
+  .roles-card {
+    padding: 10px;
+  }
+
+  .roles-card-title {
+    font-size: 14px;
+  }
+
+  .roles-list li {
+    font-size: 12px;
+  }
+
+
+
+  .col-4 {
+    width: 100%;
+
+    margin-bottom: 15px;
+  }
+
+  #calendar {
+    width: 220%;
+    height: auto;
+    max-width: 300%;
+    margin-left: -100px;
+
+  }
+  #Avisos{
+    text-align: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+}
+
 </style>
 
 <div class="container">
@@ -299,6 +316,7 @@
       </div>
       <div class="col-4">
         <p><strong>Avisos</strong></p>
+        <div id="Avisos"></div>
         {% if notifications %}
         {% for notification in notifications %}
         <strong style="margin-left: 45px; color:aliceblue"> *{{ notification.redator }} -
